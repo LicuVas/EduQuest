@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+    <title>EduQuest - AI Tutor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&subset=latin-ext&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .tutor-page {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .tutor-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .tutor-avatar {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .tutor-info h1 {
+            font-size: 1.2rem;
+            margin-bottom: 2px;
+        }
+
+        .tutor-info p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-md);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+            background: var(--color-bg);
+        }
+
+        .message {
+            max-width: 85%;
+            padding: var(--space-md);
+            border-radius: var(--radius-lg);
+            animation: slideIn 0.3s ease;
+        }
+
+        .message--ai {
+            align-self: flex-start;
+            background: white;
+            box-shadow: var(--shadow-sm);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message--user {
+            align-self: flex-end;
+            background: var(--gradient-primary);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-sender {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-bottom: 4px;
+        }
+
+        .quick-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+        }
+
+        .quick-btn {
+            padding: var(--space-sm) var(--space-md);
+            background: var(--color-primary-light);
+            color: white;
+            border: none;
+            border-radius: var(--radius-xl);
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .chat-input-area {
+            padding: var(--space-md);
+            background: white;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: var(--space-sm);
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: var(--space-md);
+            border: 2px solid var(--color-primary-light);
+            border-radius: var(--radius-xl);
+            font-size: 1rem;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .send-btn,
+        .voice-btn {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .voice-btn {
+            background: var(--color-secondary);
+        }
+
+        .voice-btn.recording {
+            background: var(--color-error);
+            animation: pulse 1s infinite;
+        }
+
+        .voice-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: var(--space-sm);
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--color-text-light);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .subject-chips {
+            display: flex;
+            gap: var(--space-sm);
+            padding: var(--space-sm) var(--space-md);
+            overflow-x: auto;
+            background: white;
+        }
+
+        .chip {
+            padding: 6px 12px;
+            background: var(--color-bg);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .chip--active {
+            background: var(--color-primary);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="tutor-page">
+        <header class="tutor-header">
+            <div class="tutor-avatar">🤖</div>
+            <div class="tutor-info">
+                <h1>EduBot</h1>
+                <p id="statusText">Gata să te ajut! 🌟</p>
+            </div>
+        </header>
+
+        <div class="subject-chips">
+            <div class="chip chip--active" data-subject="all">Toate</div>
+            <div class="chip" data-subject="romana">📕 Română</div>
+            <div class="chip" data-subject="matematica">🔢 Matematică</div>
+            <div class="chip" data-subject="engleza">🇬🇧 Engleză</div>
+            <div class="chip" data-subject="stiinta">🔬 Știință</div>
+        </div>
+
+        <div class="chat-container" id="chatContainer">
+            <div class="message message--ai">
+                <div class="message-sender">🤖 EduBot</div>
+                <div>Bună! 👋 Sunt EduBot, asistentul tău de învățare. Cu ce te pot ajuta azi?</div>
+                <div class="quick-questions">
+                    <button class="quick-btn" onclick="askQuick('Explică-mi tabla înmulțirii')">📊 Tabla
+                        înmulțirii</button>
+                    <button class="quick-btn" onclick="askQuick('Ce sunt substantivele?')">📝 Substantive</button>
+                    <button class="quick-btn" onclick="askQuick('Teach me colors in English')">🎨 English
+                        colors</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()" title="Vorbește">
+                🎤
+            </button>
+            <input type="text" class="chat-input" id="messageInput" placeholder="Scrie sau vorbește..."
+                onkeypress="if(event.key==='Enter')sendMessage()">
+            <button class="send-btn" onclick="sendMessage()">➤</button>
+        </div>
+
+        <nav class="bottom-nav">
+            <a href="dashboard.html" class="nav-item"><span class="nav-icon">🏠</span><span>Acasă</span></a>
+            <a href="quests.html" class="nav-item"><span class="nav-icon">🎯</span><span>Misiuni</span></a>
+            <a href="tutor.html" class="nav-item nav-item--active"><span
+                    class="nav-icon">🤖</span><span>Tutor</span></a>
+            <a href="achievements.html" class="nav-item"><span class="nav-icon">🏆</span><span>Trofee</span></a>
+        </nav>
+    </div>
+
+    <script>
+        const AI_RESPONSES = {
+            'tabla înmulțirii': '📊 **Tabla înmulțirii** este un tabel care ne arată rezultatele înmulțirilor!\n\nDe exemplu:\n• 2 × 3 = 6 (2 luat de 3 ori)\n• 3 × 4 = 12\n• 5 × 5 = 25\n\n💡 **Sfat:** Începe cu tabla lui 2, apoi 5, apoi 10. Sunt cele mai ușoare!',
+            'substantivele': '📝 **Substantivele** sunt cuvinte care denumesc:\n• **Ființe:** pisică, copil, mama\n• **Lucruri:** masă, carte, minge\n• **Locuri:** școală, parc, casă\n\n🎯 **Test rapid:** În propoziția "Pisica doarme pe canapea" - substantivele sunt "pisica" și "canapea"!',
+            'colors': '🎨 **Colors in English:**\n• 🔴 Red - Roșu\n• 🔵 Blue - Albastru\n• 🟢 Green - Verde\n• 🟡 Yellow - Galben\n• ⚫ Black - Negru\n• ⚪ White - Alb\n\n🎵 Try singing: "Red and yellow and pink and blue..."',
+            'default': '🤔 Hmm, lasă-mă să mă gândesc la asta...\n\nPoți să-mi spui mai multe despre ce vrei să înveți? Pot să te ajut cu:\n• 📕 Limba Română\n• 🔢 Matematică\n• 🇬🇧 Engleză\n• 🔬 Știință'
+        };
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            addMessage(text, 'user');
+            input.value = '';
+
+            showTyping();
+            setTimeout(() => {
+                hideTyping();
+                const response = getResponse(text);
+                addMessage(response, 'ai');
+            }, 1000 + Math.random() * 1000);
+        }
+
+        function askQuick(question) {
+            document.getElementById('messageInput').value = question;
+            sendMessage();
+        }
+
+        function addMessage(text, sender) {
+            const container = document.getElementById('chatContainer');
+            const msg = document.createElement('div');
+            msg.className = `message message--${sender}`;
+            msg.innerHTML = sender === 'ai'
+                ? `<div class="message-sender">🤖 EduBot</div><div>${formatText(text)}</div>`
+                : text;
+            container.appendChild(msg);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function formatText(text) {
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>')
+                .replace(/• /g, '&bull; ');
+        }
+
+        function getResponse(question) {
+            const q = question.toLowerCase();
+            if (q.includes('înmulțir') || q.includes('tabla')) return AI_RESPONSES['tabla înmulțirii'];
+            if (q.includes('substantiv')) return AI_RESPONSES['substantivele'];
+            if (q.includes('color') || q.includes('culor')) return AI_RESPONSES['colors'];
+            if (q.includes('salut') || q.includes('buna')) return 'Bună! 👋 Ce vrei să învățăm azi?';
+            if (q.includes('mulțumesc') || q.includes('mersi')) return 'Cu plăcere! 😊 Sunt aici dacă ai nevoie de ajutor!';
+            return AI_RESPONSES['default'];
+        }
+
+        function showTyping() {
+            const container = document.getElementById('chatContainer');
+            const typing = document.createElement('div');
+            typing.id = 'typingIndicator';
+            typing.className = 'message message--ai';
+            typing.innerHTML = '<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+            container.appendChild(typing);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function hideTyping() {
+            document.getElementById('typingIndicator')?.remove();
+        }
+
+        document.querySelectorAll('.chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                document.querySelector('.chip--active').classList.remove('chip--active');
+                chip.classList.add('chip--active');
+            });
+        });
+
+        // Voice Recognition
+        let recognition = null;
+        let isRecording = false;
+
+        function initVoice() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                document.getElementById('voiceBtn').disabled = true;
+                document.getElementById('voiceBtn').title = 'Browserul nu suportă recunoaștere vocală';
+                return;
+            }
+
+            recognition = new SpeechRecognition();
+            recognition.lang = 'ro-RO';
+            recognition.continuous = false;
+            recognition.interimResults = true;
+
+            recognition.onresult = (event) => {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    transcript += event.results[i][0].transcript;
+                }
+                document.getElementById('messageInput').value = transcript;
+
+                // Auto-send when speech is final
+                if (event.results[event.results.length - 1].isFinal) {
+                    setTimeout(() => {
+                        if (transcript.trim()) sendMessage();
+                    }, 500);
+                }
+            };
+
+            recognition.onend = () => {
+                isRecording = false;
+                document.getElementById('voiceBtn').classList.remove('recording');
+                document.getElementById('voiceBtn').textContent = '🎤';
+            };
+
+            recognition.onerror = (event) => {
+                console.log('Voice error:', event.error);
+                isRecording = false;
+                document.getElementById('voiceBtn').classList.remove('recording');
+                document.getElementById('voiceBtn').textContent = '🎤';
+            };
+        }
+
+        function toggleVoice() {
+            if (!recognition) {
+                alert('Browserul nu suportă recunoaștere vocală. Folosește Chrome pe Android.');
+                return;
+            }
+
+            if (isRecording) {
+                recognition.stop();
+            } else {
+                try {
+                    recognition.start();
+                    isRecording = true;
+                    document.getElementById('voiceBtn').classList.add('recording');
+                    document.getElementById('voiceBtn').textContent = '⏹️';
+                    document.getElementById('messageInput').placeholder = 'Ascult... Vorbește acum!';
+                } catch (e) {
+                    console.log('Voice error:', e);
+                }
+            }
+        }
+
+        // Initialize voice on load
+        document.addEventListener('DOMContentLoaded', initVoice);
+
+        // Keyboard detection for mobile
+        const originalHeight = window.innerHeight;
+        let keyboardOpen = false;
+
+        function checkKeyboard() {
+            const currentHeight = window.innerHeight;
+            const heightDiff = originalHeight - currentHeight;
+
+            // If screen shrunk by more than 150px, keyboard is probably open
+            if (heightDiff > 150 && !keyboardOpen) {
+                keyboardOpen = true;
+                document.body.classList.add('keyboard-open');
+                // Scroll chat to bottom when keyboard opens
+                const container = document.getElementById('chatContainer');
+                setTimeout(() => container.scrollTop = container.scrollHeight, 100);
+            } else if (heightDiff < 100 && keyboardOpen) {
+                keyboardOpen = false;
+                document.body.classList.remove('keyboard-open');
+            }
+        }
+
+        // Listen for resize events (keyboard open/close)
+        window.addEventListener('resize', checkKeyboard);
+
+        // Also detect focus on input
+        document.getElementById('messageInput').addEventListener('focus', () => {
+            setTimeout(checkKeyboard, 300);
+            // Scroll input into view
+            setTimeout(() => {
+                document.getElementById('messageInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 400);
+        });
+
+        document.getElementById('messageInput').addEventListener('blur', () => {
+            setTimeout(() => {
+                document.body.classList.remove('keyboard-open');
+                keyboardOpen = false;
+            }, 100);
+        });
+    </script>
+</body>
+
+</html>

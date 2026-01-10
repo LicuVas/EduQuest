@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>EduQuest - Admin Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&subset=latin-ext&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../styles/main.css">
+    <style>
+        body {
+            background: #f4f6f9;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+            color: white;
+            padding: var(--space-lg);
+        }
+
+        .admin-header h1 {
+            font-size: 1.4rem;
+            margin-bottom: var(--space-xs);
+        }
+
+        .admin-header p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+        }
+
+        .header-btn {
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: var(--radius-lg);
+            color: white;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--space-md);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-card .icon {
+            font-size: 2rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .stat-card .label {
+            font-size: 0.8rem;
+            color: var(--color-text-light);
+        }
+
+        .section-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--space-lg);
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: var(--color-bg);
+            padding: var(--space-md);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .section-body {
+            padding: var(--space-md);
+        }
+
+        .user-row {
+            display: flex;
+            align-items: center;
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--color-bg);
+            gap: var(--space-md);
+        }
+
+        .user-row:last-child {
+            border: none;
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .user-meta {
+            font-size: 0.85rem;
+            color: var(--color-text-light);
+        }
+
+        .user-stats {
+            display: flex;
+            gap: var(--space-lg);
+            text-align: center;
+        }
+
+        .user-stats .stat {}
+
+        .user-stats .stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .user-stats .stat-label {
+            font-size: 0.7rem;
+            color: var(--color-text-light);
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-sm) 0;
+        }
+
+        .activity-time {
+            font-size: 0.75rem;
+            color: var(--color-text-light);
+            width: 50px;
+            flex-shrink: 0;
+        }
+
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.success {
+            background: rgba(0, 184, 148, 0.15);
+        }
+
+        .activity-icon.info {
+            background: rgba(108, 92, 231, 0.15);
+        }
+
+        .activity-text {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        .chart-placeholder {
+            height: 200px;
+            background: linear-gradient(135deg, #f8f9fe 0%, #e8ecff 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-light);
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            margin-bottom: var(--space-md);
+        }
+
+        .tab {
+            padding: var(--space-md);
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--color-text-light);
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .insight-card {
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-lg);
+        }
+
+        .insight-card h3 {
+            margin-bottom: var(--space-sm);
+        }
+
+        .insight-card p {
+            opacity: 0.95;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            color: white;
+            text-decoration: none;
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+        }
+
+        @media (max-width: 600px) {
+            .user-stats {
+                display: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="admin-header">
+        <a href="../index.html" class="back-link">← Înapoi la EduQuest</a>
+        <h1>📊 Admin Dashboard</h1>
+        <p>Bine ai venit, <span id="adminName">Admin</span>!</p>
+        <div class="header-actions">
+            <button class="header-btn" onclick="exportData()">📥 Export Date</button>
+            <button class="header-btn" onclick="location.href='../parent/settings.html'">⚙️ Setări</button>
+            <button class="header-btn" onclick="logout()">🚪 Deconectare</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="icon">👨‍👩‍👧‍👧</div>
+                <div class="value" id="totalUsers">4</div>
+                <div class="label">Utilizatori</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">⭐</div>
+                <div class="value" id="totalPoints">0</div>
+                <div class="label">Puncte Totale</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">✅</div>
+                <div class="value" id="totalQuests">0</div>
+                <div class="label">Misiuni Complete</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">🔥</div>
+                <div class="value" id="avgStreak">0</div>
+                <div class="label">Streak Mediu</div>
+            </div>
+        </div>
+
+        <!-- AI Insights -->
+        <div class="insight-card">
+            <h3>💡 Insight AI - Rezumat Săptămânal</h3>
+            <p id="aiInsight">
+                <strong>Rebecca</strong> a excelat la matematică (92% acuratețe), iar <strong>Brianna</strong>
+                progresează constant la citit.
+                <strong>Nicoleta</strong> a început bine cu istoria medievală.
+                <strong>Tata</strong> a terminat modulul de AHK basics.
+                <br><br>
+                <em>Recomandare:</em> Încurajați sesiuni scurte zilnice pentru menținerea streak-urilor!
+            </p>
+        </div>
+
+        <!-- Users Overview -->
+        <div class="section-card">
+            <div class="section-header">👥 Utilizatori</div>
+            <div id="usersContainer">
+                <!-- Generated by JS -->
+            </div>
+        </div>
+
+        <!-- Activity Log -->
+        <div class="section-card">
+            <div class="section-header">📋 Activitate Recentă</div>
+            <div class="section-body" id="activityContainer">
+                <!-- Generated by JS -->
+            </div>
+        </div>
+
+        <!-- Progress Charts -->
+        <div class="section-card">
+            <div class="section-header">📈 Progres</div>
+            <div class="section-body">
+                <div class="tabs">
+                    <button class="tab active" data-period="week">Săptămâna</button>
+                    <button class="tab" data-period="month">Luna</button>
+                    <button class="tab" data-period="all">Total</button>
+                </div>
+                <div class="chart-placeholder">
+                    <span style="font-size:3rem">📊</span>
+                    <span>Grafic progres (se va integra)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Section -->
+        <div class="section-card">
+            <div class="section-header">📑 Rapoarte</div>
+            <div class="section-body">
+                <button class="btn btn--secondary" onclick="generateReport('daily')"
+                    style="margin-right:var(--space-sm)">
+                    📅 Raport Zilnic
+                </button>
+                <button class="btn btn--secondary" onclick="generateReport('weekly')"
+                    style="margin-right:var(--space-sm)">
+                    📆 Raport Săptămânal
+                </button>
+                <button class="btn btn--secondary" onclick="generateReport('monthly')">
+                    🗓️ Raport Lunar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const USERS = {
+            rebecca: { name: 'Rebecca', avatar: '🧽', gradient: 'var(--gradient-rebecca)' },
+            brianna: { name: 'Brianna', avatar: '🐱', gradient: 'var(--gradient-brianna)' },
+            tata: { name: 'Tata', avatar: '👨‍💻', gradient: 'linear-gradient(135deg, #00B894 0%, #55EFC4 100%)' },
+            nicoleta: { name: 'Nicoleta', avatar: '👩‍🎓', gradient: 'linear-gradient(135deg, #E17055 0%, #FDCB6E 100%)' }
+        };
+
+        // Check admin session
+        const adminUser = localStorage.getItem('eduquest_admin');
+        if (!adminUser) {
+            window.location.href = 'login.html';
+        } else {
+            document.getElementById('adminName').textContent = adminUser === 'tata' ? 'Tata' : 'Mama';
+        }
+
+        // Load all user stats
+        function loadStats() {
+            let totalPoints = 0;
+            let totalQuests = 0;
+            let totalStreak = 0;
+            let userCount = 0;
+
+            const usersHtml = Object.keys(USERS).map(userId => {
+                const stats = JSON.parse(localStorage.getItem(`eduquest_stats_${userId}`) || '{"totalPoints":0,"questsCompleted":0,"streak":0}');
+                totalPoints += stats.totalPoints || 0;
+                totalQuests += stats.questsCompleted || 0;
+                totalStreak += stats.streak || 0;
+                userCount++;
+
+                const user = USERS[userId];
+                return `
+                    <div class="user-row">
+                        <div class="user-avatar" style="background:${user.gradient}">${user.avatar}</div>
+                        <div class="user-info">
+                            <div class="user-name">${user.name}</div>
+                            <div class="user-meta">${stats.totalPoints} puncte • ${stats.questsCompleted} misiuni</div>
+                        </div>
+                        <div class="user-stats">
+                            <div class="stat">
+                                <div class="stat-value">${stats.totalPoints}</div>
+                                <div class="stat-label">Puncte</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">${stats.questsCompleted}</div>
+                                <div class="stat-label">Misiuni</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">${stats.streak}🔥</div>
+                                <div class="stat-label">Streak</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('usersContainer').innerHTML = usersHtml;
+            document.getElementById('totalPoints').textContent = totalPoints;
+            document.getElementById('totalQuests').textContent = totalQuests;
+            document.getElementById('avgStreak').textContent = Math.round(totalStreak / userCount) || 0;
+        }
+
+        // Load activity log
+        function loadActivity() {
+            const activities = [
+                { time: '10:30', icon: '✓', type: 'success', text: 'Rebecca a completat "Tabla înmulțirii"' },
+                { time: '11:15', icon: '✓', type: 'success', text: 'Brianna a completat "Numere 1-20"' },
+                { time: '12:00', icon: '🎯', type: 'info', text: 'Nicoleta a început lecția de Istorie' },
+                { time: '14:30', icon: '🏆', type: 'success', text: 'Tata a câștigat badge-ul "AHK Master"' },
+                { time: '16:00', icon: '📚', type: 'info', text: 'Rebecca a folosit AI Tutor pentru matematică' }
+            ];
+
+            const html = activities.map(a => `
+                <div class="activity-item">
+                    <div class="activity-time">${a.time}</div>
+                    <div class="activity-icon ${a.type}">${a.icon}</div>
+                    <div class="activity-text">${a.text}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('activityContainer').innerHTML = html;
+        }
+
+        // Export data
+        function exportData() {
+            const data = {
+                exportDate: new Date().toISOString(),
+                users: {}
+            };
+
+            Object.keys(USERS).forEach(userId => {
+                data.users[userId] = {
+                    ...USERS[userId],
+                    stats: JSON.parse(localStorage.getItem(`eduquest_stats_${userId}`) || '{}')
+                };
+            });
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `eduquest_export_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
+
+        // Generate report
+        function generateReport(type) {
+            const reports = {
+                daily: 'Raportul zilnic a fost generat!',
+                weekly: 'Raportul săptămânal a fost generat!',
+                monthly: 'Raportul lunar a fost generat!'
+            };
+
+            alert(reports[type] + '\n\n(Funcție în dezvoltare - va exporta PDF în viitor)');
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('eduquest_admin');
+            localStorage.removeItem('eduquest_admin_time');
+            window.location.href = '../index.html';
+        }
+
+        // Tabs
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelector('.tab.active').classList.remove('active');
+                tab.classList.add('active');
+            });
+        });
+
+        // Initialize
+        loadStats();
+        loadActivity();
+    </script>
+</body>
+
+</html>

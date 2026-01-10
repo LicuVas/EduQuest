@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduQuest - Dashboard Părinți</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&subset=latin-ext&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../styles/main.css">
+    <style>
+        body {
+            background: #f4f6f9;
+        }
+
+        .parent-header {
+            background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+            color: white;
+            padding: var(--space-xl);
+        }
+
+        .parent-header h1 {
+            font-size: 1.6rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+        }
+
+        .header-btn {
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: var(--radius-lg);
+            color: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: var(--space-md);
+        }
+
+        .overview-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+
+        .child-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .child-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid var(--color-bg);
+        }
+
+        .child-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .child-avatar--rebi {
+            background: var(--gradient-rebecca);
+        }
+
+        .child-avatar--bri {
+            background: var(--gradient-brianna);
+        }
+
+        .child-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .child-grade {
+            font-size: 0.85rem;
+            color: var(--color-text-light);
+        }
+
+        .child-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-sm);
+            text-align: center;
+        }
+
+        .child-stat-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .child-stat-label {
+            font-size: 0.75rem;
+            color: var(--color-text-light);
+        }
+
+        .section-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--space-lg);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-sm) 0;
+            border-bottom: 1px solid var(--color-bg);
+        }
+
+        .activity-item:last-child {
+            border: none;
+        }
+
+        .activity-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .activity-icon--success {
+            background: rgba(0, 184, 148, 0.15);
+        }
+
+        .activity-icon--pending {
+            background: rgba(253, 203, 110, 0.15);
+        }
+
+        .activity-info {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .activity-meta {
+            font-size: 0.8rem;
+            color: var(--color-text-light);
+        }
+
+        .activity-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .activity-badge--done {
+            background: rgba(0, 184, 148, 0.15);
+            color: #00B894;
+        }
+
+        .activity-badge--pending {
+            background: rgba(253, 203, 110, 0.15);
+            color: #D68910;
+        }
+
+        .insight-card {
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-lg);
+        }
+
+        .insight-icon {
+            font-size: 2rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .insight-title {
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+        }
+
+        .insight-text {
+            font-size: 0.95rem;
+            opacity: 0.95;
+        }
+
+        .chart-placeholder {
+            height: 200px;
+            background: var(--color-bg);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-light);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="parent-header">
+        <a href="../index.html" class="back-link">← Înapoi la EduQuest</a>
+        <h1>👨‍👩‍👧‍👧 Dashboard Părinți</h1>
+        <p>Monitorizează progresul și descoperă talentele copiilor</p>
+        <div class="header-actions">
+            <button class="header-btn" onclick="exportReport()">📊 Export Raport</button>
+            <button class="header-btn" onclick="location.href='settings.html'">⚙️ Setări</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- AI Insight -->
+        <div class="insight-card">
+            <div class="insight-icon">💡</div>
+            <div class="insight-title">Insight AI</div>
+            <div class="insight-text" id="aiInsight">
+                Rebecca arată potențial în matematică - rezolvă problemele de înmulțire cu 23% mai rapid decât media.
+                Brianna preferă activitățile creative și are cel mai bun scor la exercițiile cu imagini.
+            </div>
+        </div>
+
+        <!-- Children Overview -->
+        <div class="overview-cards">
+            <div class="child-card" id="rebiCard">
+                <div class="child-header">
+                    <div class="child-avatar child-avatar--rebi">👧</div>
+                    <div>
+                        <div class="child-name">Rebecca</div>
+                        <div class="child-grade">Clasa a III-a</div>
+                    </div>
+                </div>
+                <div class="child-stats">
+                    <div>
+                        <div class="child-stat-value" id="rebiPoints">150</div>
+                        <div class="child-stat-label">Puncte</div>
+                    </div>
+                    <div>
+                        <div class="child-stat-value" id="rebiQuests">12</div>
+                        <div class="child-stat-label">Misiuni</div>
+                    </div>
+                    <div>
+                        <div class="child-stat-value" id="rebiStreak">3🔥</div>
+                        <div class="child-stat-label">Streak</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="child-card" id="briCard">
+                <div class="child-header">
+                    <div class="child-avatar child-avatar--bri">👧</div>
+                    <div>
+                        <div class="child-name">Brianna</div>
+                        <div class="child-grade">Clasa I</div>
+                    </div>
+                </div>
+                <div class="child-stats">
+                    <div>
+                        <div class="child-stat-value" id="briPoints">80</div>
+                        <div class="child-stat-label">Puncte</div>
+                    </div>
+                    <div>
+                        <div class="child-stat-value" id="briQuests">8</div>
+                        <div class="child-stat-label">Misiuni</div>
+                    </div>
+                    <div>
+                        <div class="child-stat-value" id="briStreak">2🔥</div>
+                        <div class="child-stat-label">Streak</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Today -->
+        <div class="section-card">
+            <h2 class="section-title">📅 Activitate Azi</h2>
+            <div class="activity-list" id="activityList">
+                <div class="activity-item">
+                    <div class="activity-icon activity-icon--success">✓</div>
+                    <div class="activity-info">
+                        <div class="activity-title">Rebecca - Tabla înmulțirii</div>
+                        <div class="activity-meta">Matematică • 5/5 corecte • 10:30</div>
+                    </div>
+                    <span class="activity-badge activity-badge--done">Completat</span>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon activity-icon--success">✓</div>
+                    <div class="activity-info">
+                        <div class="activity-title">Brianna - Numere 1-20</div>
+                        <div class="activity-meta">Matematică • 4/5 corecte • 11:15</div>
+                    </div>
+                    <span class="activity-badge activity-badge--done">Completat</span>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon activity-icon--pending">⏳</div>
+                    <div class="activity-info">
+                        <div class="activity-title">Rebecca - Vocabular Engleză</div>
+                        <div class="activity-meta">Engleză • Neterminat</div>
+                    </div>
+                    <span class="activity-badge activity-badge--pending">În așteptare</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weekly Progress -->
+        <div class="section-card">
+            <h2 class="section-title">📈 Progres Săptămânal</h2>
+            <div class="chart-placeholder">
+                📊 Grafic progres (se va integra cu Chart.js)
+            </div>
+        </div>
+
+        <!-- Talent Insights -->
+        <div class="section-card">
+            <h2 class="section-title">🌟 Descoperiri Talente</h2>
+            <div class="activity-list">
+                <div class="activity-item">
+                    <div class="activity-icon" style="background:rgba(108,92,231,0.15)">🔧</div>
+                    <div class="activity-info">
+                        <div class="activity-title">Rebecca: Gândire Logică</div>
+                        <div class="activity-meta">Rezolvă puzzle-uri rapid, preferă matematica</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon" style="background:rgba(245,87,108,0.15)">🎨</div>
+                    <div class="activity-info">
+                        <div class="activity-title">Brianna: Creativitate Vizuală</div>
+                        <div class="activity-meta">Excelează la exerciții cu imagini și culori</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function loadStats() {
+            const rebiStats = JSON.parse(localStorage.getItem('eduquest_stats_rebecca') || '{"totalPoints":150,"questsCompleted":12,"streak":3}');
+            const briStats = JSON.parse(localStorage.getItem('eduquest_stats_brianna') || '{"totalPoints":80,"questsCompleted":8,"streak":2}');
+
+            document.getElementById('rebiPoints').textContent = rebiStats.totalPoints;
+            document.getElementById('rebiQuests').textContent = rebiStats.questsCompleted;
+            document.getElementById('rebiStreak').textContent = rebiStats.streak + '🔥';
+
+            document.getElementById('briPoints').textContent = briStats.totalPoints;
+            document.getElementById('briQuests').textContent = briStats.questsCompleted;
+            document.getElementById('briStreak').textContent = briStats.streak + '🔥';
+        }
+
+        function exportReport() {
+            const report = {
+                date: new Date().toLocaleDateString('ro-RO'),
+                rebecca: JSON.parse(localStorage.getItem('eduquest_stats_rebecca') || '{}'),
+                brianna: JSON.parse(localStorage.getItem('eduquest_stats_brianna') || '{}')
+            };
+
+            const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `eduquest_report_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
+
+        document.addEventListener('DOMContentLoaded', loadStats);
+    </script>
+</body>
+
+</html>

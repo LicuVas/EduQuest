@@ -1,0 +1,31 @@
+{
+    "api": {
+        "provider": "grok",
+        "api_key": "YOUR_API_KEY_HERE",
+        "model": "grok-beta",
+        "base_url": "https://api.x.ai/v1"
+    },
+    "app": {
+        "name": "EduQuest",
+        "language": "ro",
+        "port": 8080
+    },
+    "users": {
+        "rebecca": {
+            "name": "Rebecca",
+            "nickname": "Rebi",
+            "grade": 3,
+            "mascot": "Re_Roblox",
+            "style": "technical",
+            "type": "child"
+        },
+        "brianna": {
+            "name": "Brianna",
+            "nickname": "Bri",
+            "grade": 1,
+            "mascot": "Bri_Roblox",
+            "style": "artistic",
+            "type": "child"
+        }
+    }
+}

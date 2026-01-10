@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#6C5CE7">
+
+    <title>EduQuest - Dashboard</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&subset=latin-ext&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/main.css">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <style>
+        .dashboard-header {
+            position: relative;
+            padding-bottom: var(--space-xxl);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .user-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: var(--radius-round);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            background: rgba(255, 255, 255, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .level-info {
+            flex: 1;
+        }
+
+        .level-name {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .xp-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            margin-top: var(--space-xs);
+            overflow: hidden;
+        }
+
+        .xp-fill {
+            height: 100%;
+            background: white;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .streak-badge {
+            position: absolute;
+            top: var(--space-md);
+            right: var(--space-md);
+            background: rgba(255, 255, 255, 0.2);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+
+        .streak-badge .fire {
+            font-size: 1.2rem;
+        }
+
+        .today-progress {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+
+        .progress-title {
+            font-size: 0.9rem;
+            margin-bottom: var(--space-sm);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .main-content {
+            padding: var(--space-md);
+            padding-bottom: 100px;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+
+        .action-card {
+            background: var(--color-card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            box-shadow: var(--shadow-sm);
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .action-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .action-icon {
+            font-size: 2.5rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .action-label {
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .motivational-card {
+            background: var(--gradient-rainbow);
+            color: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            text-align: center;
+        }
+
+        .motivational-text {
+            font-size: 1.1rem;
+            font-style: italic;
+        }
+
+        .reward-preview {
+            background: var(--color-card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-xl);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .reward-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+        }
+
+        .reward-header h3 {
+            font-size: 1rem;
+            color: var(--color-text-light);
+        }
+
+        .next-reward {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .reward-icon {
+            font-size: 2.5rem;
+            filter: grayscale(50%);
+        }
+
+        .reward-info h4 {
+            font-size: 1rem;
+            margin-bottom: var(--space-xs);
+        }
+
+        .reward-info p {
+            font-size: 0.85rem;
+            color: var(--color-text-light);
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <!-- Header -->
+        <header class="dashboard-header" id="header">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">👧</div>
+                <div class="level-info">
+                    <div class="greeting" id="greeting">Bună, Rebi! 🌟</div>
+                    <div class="level-name" id="levelName">Nivel: Explorator 🌱</div>
+                    <div class="xp-bar">
+                        <div class="xp-fill" id="xpFill" style="width: 45%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="streak-badge">
+                <span class="fire">🔥</span>
+                <span id="streakCount">3 zile</span>
+            </div>
+
+            <div class="today-progress">
+                <div class="progress-title">
+                    <span>Progres Azi</span>
+                    <span id="todayProgress">2/5 misiuni</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-bar__fill" id="progressFill" style="width: 40%"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Motivational Quote -->
+            <div class="motivational-card">
+                <p class="motivational-text" id="motivationalText">
+                    "Fiecare pas mic te duce spre visuri mari!" ✨
+                </p>
+            </div>
+
+            <!-- Quick Actions -->
+            <h3 class="section-title">🎯 Ce vrei să faci?</h3>
+            <div class="quick-actions">
+                <a href="quests.html" class="action-card">
+                    <div class="action-icon">📚</div>
+                    <div class="action-label">Misiuni</div>
+                </a>
+                <a href="tutor.html" class="action-card">
+                    <div class="action-icon">🤖</div>
+                    <div class="action-label">AI Tutor</div>
+                </a>
+                <a href="assessment.html" class="action-card">
+                    <div class="action-icon">🎯</div>
+                    <div class="action-label">Evaluare</div>
+                </a>
+                <a href="achievements.html" class="action-card">
+                    <div class="action-icon">🏆</div>
+                    <div class="action-label">Trofee</div>
+                </a>
+                <a href="library.html" class="action-card">
+                    <div class="action-icon">📖</div>
+                    <div class="action-label">Lectură</div>
+                </a>
+                <a href="games/memory.html" class="action-card">
+                    <div class="action-icon">🧠</div>
+                    <div class="action-label">Jocuri</div>
+                </a>
+            </div>
+
+            <!-- Today's Quests Preview -->
+            <h3 class="section-title">🎮 Misiunile de Azi</h3>
+            <div class="quest-list" id="questList">
+                <!-- Quests will be loaded here -->
+            </div>
+
+            <!-- Next Reward -->
+            <div class="reward-preview mt-xl">
+                <div class="reward-header">
+                    <h3>🎁 Următoarea Recompensă</h3>
+                    <span id="pointsToReward">+50 puncte</span>
+                </div>
+                <div class="next-reward">
+                    <div class="reward-icon">🏅</div>
+                    <div class="reward-info">
+                        <h4>Badge "Matematician Curajos"</h4>
+                        <p>Completează 5 exerciții de matematică</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="dashboard.html" class="nav-item nav-item--active">
+                <span class="nav-icon">🏠</span>
+                <span>Acasă</span>
+            </a>
+            <a href="quests.html" class="nav-item">
+                <span class="nav-icon">🎯</span>
+                <span>Misiuni</span>
+            </a>
+            <a href="tutor.html" class="nav-item">
+                <span class="nav-icon">🤖</span>
+                <span>Tutor</span>
+            </a>
+            <a href="achievements.html" class="nav-item">
+                <span class="nav-icon">🏆</span>
+                <span>Trofee</span>
+            </a>
+        </nav>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/firebase-sync.js"></script>
+    <script>
+        // All data (PROFILES, SAMPLE_QUESTS, SUBJECT_ICONS, QUOTES) is now in app.js
+        // Cloud sync is handled by firebase-sync.js
+
+        // Initialize dashboard with cloud sync
+        async function initDashboard() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('user') || localStorage.getItem('eduquest_profile') || 'rebecca';
+            const profile = PROFILES[userId];
+
+            if (!profile) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Update header
+            document.getElementById('greeting').textContent = `Bună, ${profile.nickname}! 🌟`;
+
+            // Show image for kids, emoji for adults
+            if (profile.avatarImg) {
+                document.getElementById('userAvatar').innerHTML = `<img src="${profile.avatarImg}" alt="${profile.nickname}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.parentElement.textContent='${profile.avatarEmoji}'">`;
+            } else {
+                document.getElementById('userAvatar').textContent = profile.avatarEmoji;
+            }
+            document.getElementById('header').style.background = profile.gradient;
+
+            // Load quests with cloud sync
+            await loadQuests(userId);
+
+            // Set random motivational quote
+            const randomQuote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+            document.getElementById('motivationalText').textContent = `"${randomQuote}"`;
+
+            // Store current user
+            localStorage.setItem('eduquest_profile', userId);
+        }
+
+        // Load quests with cloud sync
+        async function loadQuests(userId) {
+            const questList = document.getElementById('questList');
+
+            // Try cloud first, fallback to local
+            let quests;
+            if (window.FirebaseSync && FirebaseSync.isOnline()) {
+                quests = await FirebaseSync.getQuests(userId);
+            } else {
+                quests = getUserQuests(userId);
+            }
+
+            // Update progress display
+            const completed = quests.filter(q => q.completed).length;
+            document.getElementById('todayProgress').textContent = `${completed}/${quests.length} misiuni`;
+            document.getElementById('progressFill').style.width = `${(completed / quests.length) * 100}%`;
+
+            questList.innerHTML = quests.map(quest => `
+                <div class="quest-card quest-card--${quest.subject}" onclick="startQuest(${quest.id})">
+                    <div class="quest-icon quest-icon--${quest.subject}">
+                        ${SUBJECT_ICONS[quest.subject]}
+                    </div>
+                    <div class="quest-info">
+                        <div class="quest-title">${quest.title}</div>
+                        <div class="quest-meta">
+                            <span class="quest-points">+${quest.points} ⭐</span>
+                            <span>${quest.completed ? 'Completat' : '~5 min'}</span>
+                        </div>
+                    </div>
+                    <div class="quest-status ${quest.completed ? 'quest-status--completed' : ''}">
+                        ${quest.completed ? '✓' : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Start a quest
+        function startQuest(questId) {
+            const userId = localStorage.getItem('eduquest_profile') || 'rebecca';
+            window.location.href = `exercise.html?quest=${questId}&user=${userId}`;
+        }
+
+        // Update all links to preserve user parameter
+        function updateLinksWithUser(userId) {
+            document.querySelectorAll('a[href]').forEach(link => {
+                const href = link.getAttribute('href');
+                // Skip external links and anchors
+                if (href.startsWith('http') || href.startsWith('#') || href.startsWith('javascript')) return;
+
+                // Add or update user parameter
+                const url = new URL(href, window.location.origin + window.location.pathname);
+                url.searchParams.set('user', userId);
+                link.setAttribute('href', url.pathname + url.search);
+            });
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initDashboard();
+            const userId = new URLSearchParams(window.location.search).get('user') || localStorage.getItem('eduquest_profile') || 'rebecca';
+            updateLinksWithUser(userId);
+        });
+    </script>
+</body>
+
+</html>

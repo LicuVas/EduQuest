@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduQuest - Trofee & Badge-uri</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&subset=latin-ext&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .achievements-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: var(--space-xl);
+            text-align: center;
+            border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+        }
+
+        .achievements-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .level-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+
+        .level-icon {
+            font-size: 3rem;
+        }
+
+        .level-info {
+            text-align: left;
+        }
+
+        .xp-bar {
+            width: 150px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            margin-top: var(--space-xs);
+            overflow: hidden;
+        }
+
+        .xp-fill {
+            height: 100%;
+            background: white;
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-sm);
+            margin-top: var(--space-lg);
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: var(--space-md);
+            padding-bottom: 100px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+
+        .section-header h2 {
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-md);
+        }
+
+        .badge-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.3s;
+        }
+
+        .badge-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .badge-icon {
+            font-size: 2.5rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .badge-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        .badge-desc {
+            font-size: 0.7rem;
+            color: var(--color-text-light);
+            margin-top: 4px;
+        }
+
+        .badge-card--locked {
+            opacity: 0.4;
+            filter: grayscale(100%);
+        }
+
+        .badge-card--locked .badge-icon::after {
+            content: '🔒';
+            font-size: 1rem;
+            position: absolute;
+        }
+
+        .leaderboard {
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            border-bottom: 1px solid var(--color-bg);
+        }
+
+        .leaderboard-item:last-child {
+            border: none;
+        }
+
+        .rank {
+            width: 32px;
+            height: 32px;
+            background: var(--color-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .rank--1 {
+            background: linear-gradient(135deg, #F9CA24, #F39C12);
+            color: white;
+        }
+
+        .rank--2 {
+            background: linear-gradient(135deg, #BDC3C7, #95A5A6);
+            color: white;
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .player-name {
+            font-weight: 600;
+        }
+
+        .player-xp {
+            font-size: 0.85rem;
+            color: var(--color-text-light);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <header class="achievements-header">
+            <h1>🏆 Trofee & Badge-uri</h1>
+            <p>Colecția ta de realizări</p>
+
+            <div class="level-display">
+                <div class="level-icon" id="levelIcon">🌱</div>
+                <div class="level-info">
+                    <div id="levelName">Nivel: Explorator</div>
+                    <div class="xp-bar">
+                        <div class="xp-fill" id="xpFill" style="width: 45%"></div>
+                    </div>
+                    <div style="font-size:0.8rem;margin-top:4px" id="xpText">45/100 XP</div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalPoints">150</div>
+                    <div class="stat-label">Puncte</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="questsCount">12</div>
+                    <div class="stat-label">Misiuni</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="streakCount">3🔥</div>
+                    <div class="stat-label">Streak</div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="section-header">
+                <h2>🏅 Badge-uri Câștigate</h2>
+                <span id="badgeCount">3/12</span>
+            </div>
+            <div class="badge-grid" id="badgeGrid">
+                <!-- Badges will be rendered here -->
+            </div>
+
+            <div class="section-header">
+                <h2>👯 Clasament Familie</h2>
+            </div>
+            <div class="leaderboard" id="leaderboard">
+                <!-- Leaderboard will be rendered here -->
+            </div>
+        </main>
+
+        <nav class="bottom-nav">
+            <a href="dashboard.html" class="nav-item"><span class="nav-icon">🏠</span><span>Acasă</span></a>
+            <a href="quests.html" class="nav-item"><span class="nav-icon">🎯</span><span>Misiuni</span></a>
+            <a href="tutor.html" class="nav-item"><span class="nav-icon">🤖</span><span>Tutor</span></a>
+            <a href="achievements.html" class="nav-item nav-item--active"><span
+                    class="nav-icon">🏆</span><span>Trofee</span></a>
+        </nav>
+    </div>
+
+    <script>
+        const BADGES = [
+            { id: 'first_quest', name: 'Prima Misiune', icon: '🎯', desc: 'Completează prima misiune', condition: s => s.questsCompleted >= 1 },
+            { id: 'streak_3', name: '3 Zile Streak', icon: '🔥', desc: '3 zile consecutiv', condition: s => s.streak >= 3 },
+            { id: 'streak_7', name: 'Săptămână Perfectă', icon: '⚡', desc: '7 zile consecutiv', condition: s => s.streak >= 7 },
+            { id: 'math_5', name: 'Matematician', icon: '🔢', desc: '5 misiuni de matematică', condition: s => (s.mathQuests || 0) >= 5 },
+            { id: 'reader', name: 'Cititor', icon: '📚', desc: '5 misiuni de română', condition: s => (s.romanaQuests || 0) >= 5 },
+            { id: 'english_star', name: 'English Star', icon: '⭐', desc: '5 misiuni de engleză', condition: s => (s.englezaQuests || 0) >= 5 },
+            { id: 'points_100', name: '100 Puncte', icon: '💯', desc: 'Strânge 100 puncte', condition: s => s.totalPoints >= 100 },
+            { id: 'points_500', name: '500 Puncte', icon: '🏆', desc: 'Strânge 500 puncte', condition: s => s.totalPoints >= 500 },
+            { id: 'quests_10', name: '10 Misiuni', icon: '🎖️', desc: 'Completează 10 misiuni', condition: s => s.questsCompleted >= 10 },
+            { id: 'quests_50', name: '50 Misiuni', icon: '👑', desc: 'Completează 50 misiuni', condition: s => s.questsCompleted >= 50 },
+            { id: 'early_bird', name: 'Early Bird', icon: '🌅', desc: 'Învață dimineața', condition: s => s.earlyBird },
+            { id: 'night_owl', name: 'Night Owl', icon: '🦉', desc: 'Învață seara', condition: s => s.nightOwl }
+        ];
+
+        const LEVELS = [
+            { name: 'Explorator', xp: 0, icon: '🌱' },
+            { name: 'Aventurier', xp: 100, icon: '⚔️' },
+            { name: 'Campion', xp: 300, icon: '🏆' },
+            { name: 'Legendă', xp: 600, icon: '👑' },
+            { name: 'Maestru', xp: 1000, icon: '🌟' }
+        ];
+
+        function init() {
+            const userId = localStorage.getItem('eduquest_profile') || 'rebecca';
+            const stats = JSON.parse(localStorage.getItem(`eduquest_stats_${userId}`) || '{"totalPoints":150,"questsCompleted":12,"streak":3}');
+
+            // Update stats display
+            document.getElementById('totalPoints').textContent = stats.totalPoints;
+            document.getElementById('questsCount').textContent = stats.questsCompleted;
+            document.getElementById('streakCount').textContent = `${stats.streak}🔥`;
+
+            // Calculate level
+            let level = LEVELS[0];
+            let nextLevel = LEVELS[1];
+            for (let i = 0; i < LEVELS.length; i++) {
+                if (stats.totalPoints >= LEVELS[i].xp) {
+                    level = LEVELS[i];
+                    nextLevel = LEVELS[i + 1] || LEVELS[i];
+                }
+            }
+
+            document.getElementById('levelIcon').textContent = level.icon;
+            document.getElementById('levelName').textContent = `Nivel: ${level.name}`;
+
+            const progress = nextLevel === level ? 100 : ((stats.totalPoints - level.xp) / (nextLevel.xp - level.xp)) * 100;
+            document.getElementById('xpFill').style.width = `${progress}%`;
+            document.getElementById('xpText').textContent = `${stats.totalPoints}/${nextLevel.xp} XP`;
+
+            // Render badges
+            renderBadges(stats);
+
+            // Render leaderboard
+            renderLeaderboard();
+        }
+
+        function renderBadges(stats) {
+            const grid = document.getElementById('badgeGrid');
+            let earned = 0;
+
+            grid.innerHTML = BADGES.map(badge => {
+                const unlocked = badge.condition(stats);
+                if (unlocked) earned++;
+                return `
+                    <div class="badge-card ${unlocked ? '' : 'badge-card--locked'}">
+                        <div class="badge-icon">${badge.icon}</div>
+                        <div class="badge-name">${badge.name}</div>
+                        <div class="badge-desc">${badge.desc}</div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('badgeCount').textContent = `${earned}/${BADGES.length}`;
+        }
+
+        function renderLeaderboard() {
+            const rebiStats = JSON.parse(localStorage.getItem('eduquest_stats_rebecca') || '{"totalPoints":150}');
+            const briStats = JSON.parse(localStorage.getItem('eduquest_stats_brianna') || '{"totalPoints":80}');
+
+            const players = [
+                { name: 'Rebecca', avatar: '👧', xp: rebiStats.totalPoints, gradient: 'var(--gradient-rebecca)' },
+                { name: 'Brianna', avatar: '👧', xp: briStats.totalPoints, gradient: 'var(--gradient-brianna)' }
+            ].sort((a, b) => b.xp - a.xp);
+
+            document.getElementById('leaderboard').innerHTML = players.map((p, i) => `
+                <div class="leaderboard-item">
+                    <div class="rank rank--${i + 1}">${i + 1}</div>
+                    <div style="width:40px;height:40px;background:${p.gradient};border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem">${p.avatar}</div>
+                    <div class="player-info">
+                        <div class="player-name">${p.name}</div>
+                        <div class="player-xp">${p.xp} puncte</div>
+                    </div>
+                    <div style="font-size:1.5rem">${i === 0 ? '🥇' : '🥈'}</div>
+                </div>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+</html>

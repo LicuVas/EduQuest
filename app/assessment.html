@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduQuest - Evaluare Inițială</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&subset=latin-ext&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .assessment-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: var(--space-xl);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .assessment-header {
+            text-align: center;
+            margin-bottom: var(--space-xl);
+        }
+
+        .assessment-header h1 {
+            color: var(--color-primary);
+            margin-bottom: var(--space-sm);
+        }
+
+        .assessment-header p {
+            color: var(--color-text-light);
+        }
+
+        .subject-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+
+        .subject-btn {
+            padding: var(--space-lg);
+            background: var(--color-card);
+            border: 3px solid var(--color-bg);
+            border-radius: var(--radius-lg);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            text-align: center;
+        }
+
+        .subject-btn:hover {
+            border-color: var(--color-primary-light);
+            transform: translateY(-2px);
+        }
+
+        .subject-btn.selected {
+            border-color: var(--color-primary);
+            background: rgba(108, 92, 231, 0.1);
+        }
+
+        .subject-btn .emoji {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: var(--space-sm);
+        }
+
+        .question-section {
+            display: none;
+            flex: 1;
+        }
+
+        .question-section.active {
+            display: block;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--color-bg);
+            border-radius: var(--radius-sm);
+            margin-bottom: var(--space-xl);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: width 0.3s ease;
+            border-radius: var(--radius-sm);
+        }
+
+        .question-card {
+            background: var(--color-card);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            text-align: center;
+            margin-bottom: var(--space-lg);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+        }
+
+        .option-btn {
+            padding: var(--space-lg);
+            background: var(--color-card);
+            border: 3px solid var(--color-bg);
+            border-radius: var(--radius-lg);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+        }
+
+        .option-btn:hover {
+            border-color: var(--color-primary-light);
+        }
+
+        .option-btn.selected {
+            border-color: var(--color-primary);
+            background: rgba(108, 92, 231, 0.1);
+        }
+
+        .result-section {
+            display: none;
+            text-align: center;
+            padding: var(--space-xxl);
+        }
+
+        .result-section.active {
+            display: block;
+        }
+
+        .result-icon {
+            font-size: 5rem;
+            margin-bottom: var(--space-lg);
+        }
+
+        .result-level {
+            font-size: 2rem;
+            color: var(--color-primary);
+            font-family: var(--font-display);
+            margin-bottom: var(--space-md);
+        }
+
+        .result-description {
+            color: var(--color-text-light);
+            margin-bottom: var(--space-xl);
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            margin-bottom: var(--space-lg);
+        }
+
+        .level-badge.easy {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .level-badge.medium {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .level-badge.hard {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: var(--radius-lg);
+            color: var(--color-text-light);
+            text-decoration: none;
+            font-size: 0.9rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .back-link:hover {
+            background: white;
+            color: var(--color-primary);
+        }
+    </style>
+</head>
+
+<body>
+    <a href="dashboard.html" class="back-link">← Înapoi</a>
+
+    <div class="assessment-container">
+        <!-- Intro Section -->
+        <div id="introSection">
+            <div class="assessment-header">
+                <h1>🎯 Evaluare Inițială</h1>
+                <p>Să vedem la ce nivel ești! Alege o materie pentru a începe.</p>
+            </div>
+
+            <div class="subject-selector">
+                <button class="subject-btn" onclick="startAssessment('matematica')">
+                    <span class="emoji">🔢</span>
+                    Matematică
+                </button>
+                <button class="subject-btn" onclick="startAssessment('romana')">
+                    <span class="emoji">📖</span>
+                    Română
+                </button>
+                <button class="subject-btn" onclick="startAssessment('engleza')">
+                    <span class="emoji">🇬🇧</span>
+                    Engleză
+                </button>
+            </div>
+        </div>
+
+        <!-- Question Section -->
+        <div id="questionSection" class="question-section">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+
+            <div class="question-card">
+                <div id="questionNumber" style="color:var(--color-text-light);font-size:0.9rem;margin-bottom:var(--space-sm)">
+                    Întrebarea 1 din 10
+                </div>
+                <div class="question-text" id="questionText"></div>
+            </div>
+
+            <div id="answerSection" class="options-grid"></div>
+
+            <div style="margin-top: var(--space-xl); text-align: center;">
+                <button class="btn btn--primary" onclick="submitAnswer()" id="submitBtn">Următoarea →</button>
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        <div id="resultSection" class="result-section">
+            <div class="result-icon" id="resultIcon">🎉</div>
+            <div class="result-level" id="resultLevel">Nivel Mediu</div>
+            <div class="level-badge" id="levelBadge">MEDIUM</div>
+            <p class="result-description" id="resultDescription">
+                Ai răspuns corect la majoritatea întrebărilor de dificultate medie.
+            </p>
+            <button class="btn btn--primary btn--block" onclick="saveAndReturn()">Salvează și Continuă →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = localStorage.getItem('eduquest_profile') || 'rebecca';
+        let currentSubject = '';
+        let questions = [];
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+        let selectedAnswer = null;
+
+        // Assessment questions by subject - mixed difficulty
+        const assessmentQuestions = {
+            matematica: [
+                // Easy (3)
+                { q: '5 + 3 = ?', opts: ['8', '7', '9', '6'], ans: '8', level: 'easy' },
+                { q: '10 - 4 = ?', opts: ['6', '5', '7', '4'], ans: '6', level: 'easy' },
+                { q: 'Ce urmează? 2, 4, 6, ?', opts: ['8', '7', '9', '10'], ans: '8', level: 'easy' },
+                // Medium (4)
+                { q: '23 + 45 = ?', opts: ['68', '67', '69', '58'], ans: '68', level: 'medium' },
+                { q: '5 × 7 = ?', opts: ['35', '30', '40', '25'], ans: '35', level: 'medium' },
+                { q: '81 - 29 = ?', opts: ['52', '62', '42', '51'], ans: '52', level: 'medium' },
+                { q: '24 ÷ 6 = ?', opts: ['4', '5', '3', '6'], ans: '4', level: 'medium' },
+                // Hard (3)
+                { q: '125 + 287 = ?', opts: ['412', '402', '422', '312'], ans: '412', level: 'hard' },
+                { q: '12 × 8 = ?', opts: ['96', '86', '106', '84'], ans: '96', level: 'hard' },
+                { q: '156 ÷ 12 = ?', opts: ['13', '12', '14', '11'], ans: '13', level: 'hard' }
+            ],
+            romana: [
+                // Easy
+                { q: 'Ce literă începe cuvântul "MAMA"?', opts: ['M', 'A', 'N', 'T'], ans: 'M', level: 'easy' },
+                { q: 'Câte silabe are "CA-SĂ"?', opts: ['2', '1', '3', '4'], ans: '2', level: 'easy' },
+                { q: 'Care e vocală?', opts: ['A', 'B', 'C', 'D'], ans: 'A', level: 'easy' },
+                // Medium
+                { q: '"Pisică" este:', opts: ['substantiv', 'verb', 'adjectiv', 'pronume'], ans: 'substantiv', level: 'medium' },
+                { q: 'Pluralul de la "carte":', opts: ['cărți', 'carți', 'cartele', 'carturi'], ans: 'cărți', level: 'medium' },
+                { q: 'Opusul lui "mare":', opts: ['mic', 'lat', 'lung', 'gros'], ans: 'mic', level: 'medium' },
+                { q: '"Aleargă" este:', opts: ['verb', 'substantiv', 'adjectiv', 'adverb'], ans: 'verb', level: 'medium' },
+                // Hard
+                { q: 'Forma corectă: "Copilul ___ la școală"', opts: ['merge', 'merg', 'mergi', 'mergeți'], ans: 'merge', level: 'hard' },
+                { q: 'Diminutivul de la "pisică":', opts: ['pisicuță', 'pisici', 'pisoi', 'pisoiaș'], ans: 'pisicuță', level: 'hard' },
+                { q: 'Ce timp e "Am mâncat"?', opts: ['trecut', 'prezent', 'viitor', 'infinitiv'], ans: 'trecut', level: 'hard' }
+            ],
+            engleza: [
+                // Easy
+                { q: 'RED = ?', opts: ['roșu', 'albastru', 'verde', 'galben'], ans: 'roșu', level: 'easy' },
+                { q: 'CAT = ?', opts: ['pisică', 'câine', 'iepure', 'pește'], ans: 'pisică', level: 'easy' },
+                { q: 'ONE = ?', opts: ['1', '2', '3', '4'], ans: '1', level: 'easy' },
+                // Medium
+                { q: '"Apple" înseamnă:', opts: ['măr', 'portocală', 'banană', 'strugure'], ans: 'măr', level: 'medium' },
+                { q: '"Happy" înseamnă:', opts: ['fericit', 'trist', 'supărat', 'obosit'], ans: 'fericit', level: 'medium' },
+                { q: 'Pluralul de la "cat":', opts: ['cats', 'cates', 'caties', 'cat'], ans: 'cats', level: 'medium' },
+                { q: '"I read" = ?', opts: ['Eu citesc', 'Eu scriu', 'Eu mănânc', 'Eu dorm'], ans: 'Eu citesc', level: 'medium' },
+                // Hard
+                { q: '___ apple (articol)', opts: ['an', 'a', 'the', 'some'], ans: 'an', level: 'hard' },
+                { q: '"Where do you live?" = ?', opts: ['Unde locuiești?', 'Cum te cheamă?', 'Câți ani ai?', 'Ce faci?'], ans: 'Unde locuiești?', level: 'hard' },
+                { q: '"The cat is ON the table" = pisica e:', opts: ['pe masă', 'sub masă', 'lângă masă', 'în masă'], ans: 'pe masă', level: 'hard' }
+            ]
+        };
+
+        function startAssessment(subject) {
+            currentSubject = subject;
+            questions = assessmentQuestions[subject];
+            currentQuestion = 0;
+            correctAnswers = 0;
+
+            document.getElementById('introSection').style.display = 'none';
+            document.getElementById('questionSection').classList.add('active');
+            showAssessmentQuestion();
+        }
+
+        function showAssessmentQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('questionNumber').textContent = `Întrebarea ${currentQuestion + 1} din ${questions.length}`;
+            document.getElementById('questionText').textContent = q.q;
+            document.getElementById('progressFill').style.width = `${(currentQuestion / questions.length) * 100}%`;
+
+            const answerSection = document.getElementById('answerSection');
+            answerSection.innerHTML = q.opts.map(opt =>
+                `<button class="option-btn" onclick="selectOption(this, '${opt}')">${opt}</button>`
+            ).join('');
+
+            selectedAnswer = null;
+            document.getElementById('submitBtn').textContent = currentQuestion < questions.length - 1 ? 'Următoarea →' : 'Vezi Rezultatul';
+        }
+
+        function selectOption(btn, answer) {
+            document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedAnswer = answer;
+        }
+
+        function submitAnswer() {
+            if (!selectedAnswer) {
+                alert('Te rog alege un răspuns!');
+                return;
+            }
+
+            const q = questions[currentQuestion];
+            if (selectedAnswer === q.ans) {
+                correctAnswers++;
+            }
+
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                showAssessmentQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('questionSection').classList.remove('active');
+            document.getElementById('resultSection').classList.add('active');
+
+            // Determine level based on score
+            const score = correctAnswers / questions.length;
+            let level, levelText, icon, description;
+
+            if (score < 0.4) {
+                level = 'easy';
+                levelText = 'Nivel Ușor';
+                icon = '🌱';
+                description = 'Să începem de la bază! Vei învăța treptat și vei deveni din ce în ce mai bun.';
+            } else if (score < 0.7) {
+                level = 'medium';
+                levelText = 'Nivel Mediu';
+                icon = '⭐';
+                description = 'Foarte bine! Ești pregătit pentru provocări mai interesante.';
+            } else {
+                level = 'hard';
+                levelText = 'Nivel Avansat';
+                icon = '🏆';
+                description = 'Excelent! Ești gata pentru cele mai dificile exerciții!';
+            }
+
+            document.getElementById('resultIcon').textContent = icon;
+            document.getElementById('resultLevel').textContent = levelText;
+            document.getElementById('resultDescription').textContent = `Ai răspuns corect la ${correctAnswers} din ${questions.length} întrebări. ${description}`;
+
+            const badge = document.getElementById('levelBadge');
+            badge.textContent = level.toUpperCase();
+            badge.className = `level-badge ${level}`;
+
+            // Save to localStorage for now
+            const difficultyKey = `eduquest_difficulty_${currentUser}`;
+            let userDifficulty = JSON.parse(localStorage.getItem(difficultyKey) || '{}');
+            userDifficulty[currentSubject] = level;
+            localStorage.setItem(difficultyKey, JSON.stringify(userDifficulty));
+        }
+
+        function saveAndReturn() {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+
+</html>

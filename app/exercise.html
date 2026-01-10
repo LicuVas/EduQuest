@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduQuest - Exercițiu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&subset=latin-ext&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+    <style>
+        .exercise-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .exercise-title {
+            flex: 1;
+        }
+
+        .exercise-title h1 {
+            font-size: 1.2rem;
+            margin-bottom: 2px;
+        }
+
+        .points-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+        }
+
+        .progress-tracker {
+            background: var(--color-card);
+            padding: var(--space-sm) var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .progress-dots {
+            display: flex;
+            gap: var(--space-xs);
+            flex: 1;
+            justify-content: center;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--color-bg);
+        }
+
+        .dot--completed {
+            background: var(--color-success);
+        }
+
+        .dot--current {
+            background: var(--color-primary);
+            transform: scale(1.2);
+        }
+
+        .exercise-content {
+            flex: 1;
+            padding: var(--space-xl) var(--space-md);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .question-card {
+            background: var(--color-card);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-xl);
+            box-shadow: var(--shadow-md);
+            text-align: center;
+        }
+
+        .question-text {
+            font-size: 1.4rem;
+            line-height: 1.5;
+        }
+
+        .question-text .highlight {
+            color: var(--color-primary);
+            font-weight: 700;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+        }
+
+        .option-btn {
+            padding: var(--space-lg);
+            background: var(--color-card);
+            border: 3px solid var(--color-bg);
+            border-radius: var(--radius-lg);
+            font-size: 1.3rem;
+            cursor: pointer;
+            min-height: 80px;
+        }
+
+        .option-btn:hover {
+            border-color: var(--color-primary-light);
+        }
+
+        .option-btn--selected {
+            border-color: var(--color-primary);
+            background: rgba(108, 92, 231, 0.1);
+        }
+
+        .option-btn--correct {
+            border-color: var(--color-success);
+            background: rgba(0, 184, 148, 0.15);
+        }
+
+        .option-btn--wrong {
+            border-color: var(--color-error);
+            background: rgba(225, 112, 85, 0.15);
+        }
+
+        .number-input {
+            font-size: 3rem;
+            width: 150px;
+            height: 100px;
+            text-align: center;
+            border: 3px solid var(--color-primary-light);
+            border-radius: var(--radius-lg);
+        }
+
+        /* Hint Button - Colapsabil */
+        .hint-section {
+            margin-top: var(--space-lg);
+            text-align: center;
+        }
+
+        .hint-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-sm) var(--space-md);
+            background: transparent;
+            border: 2px dashed var(--color-primary-light);
+            border-radius: var(--radius-lg);
+            color: var(--color-primary);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+        }
+
+        .hint-btn:hover {
+            background: rgba(108, 92, 231, 0.1);
+            border-style: solid;
+        }
+
+        .hint-btn.active {
+            background: rgba(108, 92, 231, 0.15);
+            border-style: solid;
+        }
+
+        .hint-text {
+            display: none;
+            margin-top: var(--space-md);
+            padding: var(--space-md);
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.1) 0%, rgba(245, 87, 108, 0.1) 100%);
+            border-radius: var(--radius-md);
+            color: var(--color-text);
+            font-size: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .hint-text.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Pentru Brianna - hint-ul e mai vizibil */
+        body.user-brianna .hint-btn {
+            font-size: 1.1rem;
+            border-color: var(--color-accent);
+            color: var(--color-accent);
+        }
+
+        body.user-brianna .hint-text {
+            font-size: 1.2rem;
+        }
+
+        /* Pentru Rebecca - hint ascuns by default, mai discret */
+        body.user-rebecca .hint-section {
+            margin-top: var(--space-md);
+        }
+
+        body.user-rebecca .hint-btn {
+            font-size: 0.85rem;
+            padding: var(--space-xs) var(--space-sm);
+        }
+
+        .action-buttons {
+            padding: var(--space-md);
+            display: flex;
+            gap: var(--space-md);
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+        }
+
+        .feedback-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .feedback-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .feedback-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-xxl);
+            text-align: center;
+            max-width: 320px;
+            margin: var(--space-md);
+        }
+
+        .feedback-icon {
+            font-size: 5rem;
+        }
+
+        .points-earned {
+            font-size: 1.3rem;
+            color: var(--color-primary);
+            font-weight: 700;
+            margin: var(--space-lg) 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page" style="min-height:100vh;display:flex;flex-direction:column;">
+        <header class="exercise-header">
+            <button class="back-btn" onclick="goBack()">←</button>
+            <div class="exercise-title">
+                <h1 id="questTitle">Exercițiu</h1>
+                <p id="questSubject" style="font-size:0.85rem;opacity:0.9;margin:0">Matematică</p>
+            </div>
+            <div class="points-badge" id="pointsBadge">+15 ⭐</div>
+        </header>
+        <div class="progress-tracker"><span id="currentQ">1</span>
+            <div class="progress-dots" id="progressDots"></div><span id="totalQ">5</span>
+        </div>
+        <main class="exercise-content">
+            <div class="question-card">
+                <div id="questionNumber"
+                    style="color:var(--color-text-light);font-size:0.9rem;margin-bottom:var(--space-sm)">Întrebarea 1
+                    din 5</div>
+                <div class="question-text" id="questionText">Cât face <span class="highlight">15 + 27</span>?</div>
+            </div>
+            <div id="answerSection"></div>
+            <!-- Hint Section - Colapsabil -->
+            <div class="hint-section" id="hintSection" style="display:none;">
+                <button class="hint-btn" onclick="toggleHint()">
+                    <span>💡</span> <span id="hintBtnText">Ajutor</span>
+                </button>
+                <div class="hint-text" id="hintText"></div>
+            </div>
+        </main>
+        <div class="action-buttons"><button class="btn btn--secondary" onclick="skipQuestion()">Sări</button><button
+                class="btn btn--primary" onclick="checkAnswer()">Verifică ✓</button></div>
+    </div>
+    <div class="feedback-overlay" id="feedbackOverlay">
+        <div class="feedback-card">
+            <div class="feedback-icon" id="feedbackIcon">🎉</div>
+            <h2 id="feedbackTitle">Excelent!</h2>
+            <p id="feedbackMessage">Ai răspuns corect!</p>
+            <div class="points-earned" id="pointsEarned">+15 puncte</div>
+            <button class="btn btn--primary btn--block" onclick="nextQuestion()">Continuă →</button>
+        </div>
+    </div>
+    <script src="js/exercise.js"></script>
+</body>
+
+</html>

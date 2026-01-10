@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#6C5CE7">
+
+    <title>EduQuest - Misiunile Tale</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&subset=latin-ext&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/main.css">
+
+    <style>
+        .quests-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: var(--space-lg);
+            text-align: center;
+        }
+
+        .quests-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: var(--space-sm);
+            padding: var(--space-md);
+            overflow-x: auto;
+            background: var(--color-card);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .filter-tab {
+            padding: var(--space-sm) var(--space-md);
+            background: var(--color-bg);
+            border: none;
+            border-radius: var(--radius-xl);
+            font-family: var(--font-primary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all var(--transition-fast);
+        }
+
+        .filter-tab--active {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .filter-tab:hover:not(.filter-tab--active) {
+            background: var(--color-primary-light);
+            color: white;
+        }
+
+        .quests-container {
+            padding: var(--space-md);
+            padding-bottom: 100px;
+        }
+
+        .subject-section {
+            margin-bottom: var(--space-xl);
+        }
+
+        .subject-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-md);
+        }
+
+        .subject-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .subject-icon--romana {
+            background: rgba(255, 107, 107, 0.2);
+        }
+
+        .subject-icon--matematica {
+            background: rgba(78, 205, 196, 0.2);
+        }
+
+        .subject-icon--engleza {
+            background: rgba(69, 183, 209, 0.2);
+        }
+
+        .subject-icon--bonus {
+            background: rgba(249, 202, 36, 0.2);
+        }
+
+        .subject-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .subject-progress {
+            margin-left: auto;
+            font-size: 0.85rem;
+            color: var(--color-text-light);
+        }
+
+        .difficulty-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: var(--space-sm);
+        }
+
+        .difficulty-badge--easy {
+            background: rgba(0, 184, 148, 0.2);
+            color: #00B894;
+        }
+
+        .difficulty-badge--medium {
+            background: rgba(253, 203, 110, 0.2);
+            color: #D68910;
+        }
+
+        .difficulty-badge--hard {
+            background: rgba(225, 112, 85, 0.2);
+            color: #E17055;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: var(--space-xxl);
+            color: var(--color-text-light);
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: var(--space-md);
+        }
+
+        .refresh-btn {
+            position: fixed;
+            bottom: 80px;
+            right: var(--space-md);
+            width: 56px;
+            height: 56px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: var(--radius-round);
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-normal);
+        }
+
+        .refresh-btn:hover {
+            transform: scale(1.1) rotate(180deg);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <!-- Header -->
+        <header class="quests-header">
+            <h1>🎯 Misiunile Tale</h1>
+            <p>Completează misiuni și câștigă puncte!</p>
+        </header>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <button class="filter-tab filter-tab--active" data-filter="all">Toate</button>
+            <button class="filter-tab" data-filter="romana">📕 Română</button>
+            <button class="filter-tab" data-filter="matematica">🔢 Matematică</button>
+            <button class="filter-tab" data-filter="engleza">🇬🇧 Engleză</button>
+            <button class="filter-tab" data-filter="bonus">⭐ Bonus</button>
+        </div>
+
+        <!-- Quests List -->
+        <div class="quests-container" id="questsContainer">
+            <!-- Will be populated by JavaScript -->
+        </div>
+
+        <!-- Refresh Button -->
+        <button class="refresh-btn" onclick="generateNewQuests()" title="Generează misiuni noi">
+            🔄
+        </button>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="dashboard.html" class="nav-item">
+                <span class="nav-icon">🏠</span>
+                <span>Acasă</span>
+            </a>
+            <a href="quests.html" class="nav-item nav-item--active">
+                <span class="nav-icon">🎯</span>
+                <span>Misiuni</span>
+            </a>
+            <a href="tutor.html" class="nav-item">
+                <span class="nav-icon">🤖</span>
+                <span>Tutor</span>
+            </a>
+            <a href="achievements.html" class="nav-item">
+                <span class="nav-icon">🏆</span>
+                <span>Trofee</span>
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        // Quest database organized by subject and grade
+        const QUEST_TEMPLATES = {
+            rebecca: {
+                romana: [
+                    { title: 'Citește un paragraf', description: 'Citește cu voce tare', points: 15, difficulty: 'easy', duration: 5 },
+                    { title: 'Scrie o propoziție', description: 'Folosește verb și substantiv', points: 20, difficulty: 'medium', duration: 7 },
+                    { title: 'Găsește substantivele', description: 'Identifică 5 substantive', points: 25, difficulty: 'medium', duration: 10 },
+                    { title: 'Dictare: 5 cuvinte', description: 'Scrie corect fără greșeli', points: 20, difficulty: 'medium', duration: 5 },
+                    { title: 'Poveste scurtă', description: 'Scrie 3-4 propoziții', points: 30, difficulty: 'hard', duration: 15 }
+                ],
+                matematica: [
+                    { title: 'Adunări până la 100', description: '5 exerciții simple', points: 15, difficulty: 'easy', duration: 5 },
+                    { title: 'Scăderi până la 100', description: '5 exerciții', points: 15, difficulty: 'easy', duration: 5 },
+                    { title: 'Tabla înmulțirii', description: 'Exersează × 3 sau × 4', points: 25, difficulty: 'medium', duration: 10 },
+                    { title: 'Probleme cu text', description: 'Rezolvă 2 probleme', points: 30, difficulty: 'hard', duration: 12 },
+                    { title: 'Figuri geometrice', description: 'Identifică și numără', points: 20, difficulty: 'easy', duration: 7 }
+                ],
+                engleza: [
+                    { title: 'Vocabular: 5 cuvinte', description: 'Învață cuvinte noi', points: 15, difficulty: 'easy', duration: 5 },
+                    { title: 'Traduceri simple', description: 'Traduce 5 propoziții', points: 20, difficulty: 'medium', duration: 8 },
+                    { title: 'Colors & Numbers', description: 'Quiz rapid', points: 15, difficulty: 'easy', duration: 5 },
+                    { title: 'Read aloud', description: 'Citește un text scurt', points: 25, difficulty: 'medium', duration: 7 },
+                    { title: 'Fill in the blanks', description: 'Completează propozițiile', points: 20, difficulty: 'medium', duration: 8 }
+                ],
+                bonus: [
+                    { title: 'Puzzle logic', description: 'Rezolvă un puzzle', points: 30, difficulty: 'medium', duration: 10 },
+                    { title: 'Quiz știință', description: 'Întrebări despre natură', points: 25, difficulty: 'easy', duration: 7 },
+                    { title: 'Coding basics', description: 'Mișcă robotul', points: 35, difficulty: 'medium', duration: 12 },
+                    { title: 'Geografie', description: 'Găsește țările pe hartă', points: 25, difficulty: 'medium', duration: 8 }
+                ]
+            },
+            brianna: {
+                romana: [
+                    { title: 'Litera zilei', description: 'Scrie litera de 5 ori', points: 10, difficulty: 'easy', duration: 5 },
+                    { title: 'Silabe', description: 'Formează 3 silabe', points: 15, difficulty: 'easy', duration: 7 },
+                    { title: 'Cuvinte cu imagini', description: 'Potrivește cuvântul', points: 15, difficulty: 'easy', duration: 5 },
+                    { title: 'Colorează litera', description: 'Colorează și scrie', points: 10, difficulty: 'easy', duration: 8 },
+                    { title: 'Citește silabe', description: 'Citește cu voce tare', points: 20, difficulty: 'medium', duration: 7 }
+                ],
+                matematica: [
+                    { title: 'Numără obiectele', description: 'Câte sunt?', points: 10, difficulty: 'easy', duration: 5 },
+                    { title: 'Adunări până la 10', description: '3 exerciții simple', points: 15, difficulty: 'easy', duration: 5 },
+                    { title: 'Mai mare sau mai mic', description: 'Compară numerele', points: 15, difficulty: 'easy', duration: 5 },
+                    { title: 'Forme și culori', description: 'Identifică formele', points: 10, difficulty: 'easy', duration: 5 },
+                    { title: 'Scăderi simple', description: 'Până la 10', points: 15, difficulty: 'easy', duration: 5 }
+                ],
+                engleza: [
+                    { title: 'Colors in English', description: 'Învață 3 culori', points: 10, difficulty: 'easy', duration: 5 },
+                    { title: 'Animals', description: 'Cat, Dog, Bird...', points: 10, difficulty: 'easy', duration: 5 },
+                    { title: 'Numbers 1-10', description: 'Spune numerele', points: 15, difficulty: 'easy', duration: 5 },
+                    { title: 'Hello & Goodbye', description: 'Salturi în engleză', points: 10, difficulty: 'easy', duration: 3 },
+                    { title: 'Body parts', description: 'Head, hands, feet', points: 15, difficulty: 'medium', duration: 7 }
+                ],
+                bonus: [
+                    { title: 'Desenează casa', description: 'Folosește forme', points: 20, difficulty: 'easy', duration: 10 },
+                    { title: 'Puzzle simplu', description: '9 piese', points: 15, difficulty: 'easy', duration: 7 },
+                    { title: 'Colorează animalul', description: 'Fii creativă!', points: 15, difficulty: 'easy', duration: 10 },
+                    { title: 'Pattern: Continuă', description: 'Ce urmează?', points: 20, difficulty: 'medium', duration: 5 }
+                ]
+            },
+            // TATA - Advanced Technical
+            tata: {
+                autohotkey: [
+                    { title: 'AHK Hotkeys', description: 'Creează 3 hotkey-uri noi', points: 30, difficulty: 'medium', duration: 15 },
+                    { title: 'AHK GUI Basics', description: 'Construiește o fereastră simplă', points: 40, difficulty: 'hard', duration: 25 },
+                    { title: 'Regex în AHK', description: 'Extrage text cu RegExMatch', points: 35, difficulty: 'hard', duration: 20 },
+                    { title: 'AHK Classes', description: 'Scrie o clasă AHK v1', points: 45, difficulty: 'hard', duration: 30 },
+                    { title: 'Automation Script', description: 'Automatizează o sarcină', points: 50, difficulty: 'hard', duration: 35 }
+                ],
+                english_grammar: [
+                    { title: 'Tenses Review', description: 'Past, Present, Future', points: 25, difficulty: 'medium', duration: 15 },
+                    { title: 'Conditionals', description: 'If clauses (0, 1, 2, 3)', points: 30, difficulty: 'hard', duration: 20 },
+                    { title: 'Reported Speech', description: 'Transformă propoziții', points: 25, difficulty: 'medium', duration: 15 },
+                    { title: 'Phrasal Verbs', description: '10 phrasal verbs noi', points: 20, difficulty: 'easy', duration: 10 },
+                    { title: 'Essay Writing', description: 'Scrie 200 cuvinte', points: 40, difficulty: 'hard', duration: 30 }
+                ],
+                cpp: [
+                    { title: 'C++ Basics', description: 'Hello World + variabile', points: 25, difficulty: 'easy', duration: 15 },
+                    { title: 'Pointeri', description: 'Înțelege pointerii', points: 35, difficulty: 'hard', duration: 25 },
+                    { title: 'OOP în C++', description: 'Clase și obiecte', points: 40, difficulty: 'hard', duration: 30 },
+                    { title: 'STL Containers', description: 'vector, map, set', points: 35, difficulty: 'medium', duration: 20 },
+                    { title: 'Mini Project', description: 'Calculator CLI', points: 50, difficulty: 'hard', duration: 40 }
+                ],
+                python: [
+                    { title: 'Python Basics', description: 'Variabile și funcții', points: 25, difficulty: 'easy', duration: 15 },
+                    { title: 'List Comprehensions', description: 'Creează liste eficient', points: 30, difficulty: 'medium', duration: 15 },
+                    { title: 'File I/O', description: 'Citește/scrie fișiere', points: 25, difficulty: 'easy', duration: 12 },
+                    { title: 'APIs cu requests', description: 'Fetch data de pe web', points: 35, difficulty: 'medium', duration: 20 },
+                    { title: 'Automation Script', description: 'Script pentru task zilnic', points: 45, difficulty: 'hard', duration: 35 }
+                ],
+                english_literature: [
+                    { title: 'Shakespeare', description: 'Analizează un sonet', points: 35, difficulty: 'hard', duration: 25 },
+                    { title: 'Victorian Era', description: 'Dicție și temele majore', points: 30, difficulty: 'medium', duration: 20 },
+                    { title: 'Modernism', description: 'T.S. Eliot, Woolf', points: 35, difficulty: 'hard', duration: 25 },
+                    { title: 'Essay Analysis', description: 'Comentariu de text', points: 40, difficulty: 'hard', duration: 30 },
+                    { title: 'Titularizare Prep', description: 'Subiect rezolvat', points: 50, difficulty: 'hard', duration: 45 }
+                ]
+            },
+            // NICOLETA - A Doua Șansă (Liceu Seral)
+            nicoleta: {
+                matematica: [
+                    { title: 'Operații de bază', description: 'Adunări și scăderi', points: 15, difficulty: 'easy', duration: 10 },
+                    { title: 'Înmulțiri', description: 'Tabla înmulțirii', points: 20, difficulty: 'easy', duration: 12 },
+                    { title: 'Împărțiri', description: 'Împărțiri simple', points: 20, difficulty: 'easy', duration: 12 },
+                    { title: 'Fracții simple', description: 'Ce este o fracție?', points: 25, difficulty: 'medium', duration: 15 },
+                    { title: 'Procente', description: 'Calculează procentul', points: 30, difficulty: 'medium', duration: 18 }
+                ],
+                romana: [
+                    { title: 'Substantivul', description: 'Identifică și folosește', points: 20, difficulty: 'easy', duration: 10 },
+                    { title: 'Verbul', description: 'Timpul și modul', points: 25, difficulty: 'medium', duration: 15 },
+                    { title: 'Adjectivul', description: 'Gradele de comparație', points: 25, difficulty: 'medium', duration: 12 },
+                    { title: 'Propoziția', description: 'Ord. cuvintelor', points: 20, difficulty: 'easy', duration: 10 },
+                    { title: 'Compunere', description: '150 cuvinte pe o temă', points: 35, difficulty: 'hard', duration: 25 }
+                ],
+                engleza: [
+                    { title: 'Vocabulary A1', description: '20 cuvinte de bază', points: 15, difficulty: 'easy', duration: 10 },
+                    { title: 'Present Simple', description: 'I work, She works', points: 20, difficulty: 'easy', duration: 12 },
+                    { title: 'Past Simple', description: 'I worked, I went', points: 25, difficulty: 'medium', duration: 15 },
+                    { title: 'Basic Conversation', description: 'Salut, prezentare', points: 15, difficulty: 'easy', duration: 8 },
+                    { title: 'Reading A1', description: 'Text scurt + înțelegere', points: 25, difficulty: 'medium', duration: 15 }
+                ],
+                franceza: [
+                    { title: 'Salutations', description: 'Bonjour, Bonsoir', points: 15, difficulty: 'easy', duration: 8 },
+                    { title: 'Les articles', description: 'le, la, les, un, une', points: 20, difficulty: 'easy', duration: 10 },
+                    { title: 'Les verbes être/avoir', description: 'Conjugare de bază', points: 25, difficulty: 'medium', duration: 15 },
+                    { title: 'Vocabulaire A1', description: '15 cuvinte noi', points: 15, difficulty: 'easy', duration: 10 },
+                    { title: 'Présent simple', description: 'Conjugare grupă I', points: 25, difficulty: 'medium', duration: 15 }
+                ],
+                italiana: [
+                    { title: 'Ciao e Arrivederci', description: 'Salutări italiene', points: 15, difficulty: 'easy', duration: 8 },
+                    { title: 'Gli articoli', description: 'il, la, lo, i, le', points: 20, difficulty: 'easy', duration: 10 },
+                    { title: 'Essere e Avere', description: 'Conjugare de bază', points: 25, difficulty: 'medium', duration: 15 },
+                    { title: 'Numere în italiană', description: '1-20 în italiană', points: 15, difficulty: 'easy', duration: 8 },
+                    { title: 'Presente indicativo', description: 'Conjugare grupă I', points: 25, difficulty: 'medium', duration: 15 }
+                ],
+                istorie: [
+                    { title: 'Antichitatea', description: 'Grecia și Roma', points: 25, difficulty: 'medium', duration: 15 },
+                    { title: 'Evul Mediu', description: 'Feudalismul', points: 25, difficulty: 'medium', duration: 15 },
+                    { title: 'România Medievală', description: 'Formarea țărilor', points: 30, difficulty: 'medium', duration: 18 },
+                    { title: 'Epoca Modernă', description: 'Revoluțiile', points: 30, difficulty: 'medium', duration: 18 },
+                    { title: 'Sec. XX', description: 'Războaiele mondiale', points: 35, difficulty: 'hard', duration: 22 }
+                ],
+                geografie: [
+                    { title: 'Harta lumii', description: 'Continente și oceane', points: 20, difficulty: 'easy', duration: 12 },
+                    { title: 'România fizică', description: 'Munți, râuri, relief', points: 25, difficulty: 'medium', duration: 15 },
+                    { title: 'Capitalele Europei', description: '15 capitale de țări', points: 20, difficulty: 'easy', duration: 12 },
+                    { title: 'Clima', description: 'Zone climatice', points: 25, difficulty: 'medium', duration: 15 },
+                    { title: 'Resurse naturale', description: 'Tipuri și utilizări', points: 25, difficulty: 'medium', duration: 15 }
+                ]
+            }
+        };
+
+        const SUBJECT_ICONS = {
+            romana: '📕',
+            matematica: '🔢',
+            engleza: '🇬🇧',
+            bonus: '⭐',
+            autohotkey: '⌨️',
+            english_grammar: '📖',
+            cpp: '💻',
+            python: '🐍',
+            english_literature: '📚',
+            franceza: '🇫🇷',
+            italiana: '🇮🇹',
+            istorie: '🏛️',
+            geografie: '🌍'
+        };
+
+        const SUBJECT_NAMES = {
+            romana: 'Limba Română',
+            matematica: 'Matematică',
+            engleza: 'Limba Engleză',
+            bonus: 'Bonus & Fun',
+            autohotkey: 'AutoHotkey',
+            english_grammar: 'English Grammar',
+            cpp: 'C++ Programming',
+            python: 'Python',
+            english_literature: 'English Literature',
+            franceza: 'Limba Franceză',
+            italiana: 'Limba Italiană',
+            istorie: 'Istorie',
+            geografie: 'Geografie'
+        };
+
+        let currentFilter = 'all';
+        let currentQuests = [];
+
+        // Generate daily quests
+        function generateDailyQuests() {
+            const userId = localStorage.getItem('eduquest_profile') || 'rebecca';
+            const templates = QUEST_TEMPLATES[userId];
+            const quests = [];
+            let id = 1;
+
+            // Generate 1-2 quests per subject
+            Object.keys(templates).forEach(subject => {
+                const subjectQuests = templates[subject];
+                const count = subject === 'bonus' ? 1 : 2;
+
+                // Random selection
+                const shuffled = [...subjectQuests].sort(() => 0.5 - Math.random());
+                shuffled.slice(0, count).forEach(template => {
+                    quests.push({
+                        id: id++,
+                        subject: subject,
+                        ...template,
+                        completed: false
+                    });
+                });
+            });
+
+            return quests;
+        }
+
+        // Load or generate quests
+        function loadQuests() {
+            const today = new Date().toDateString();
+            const savedDate = localStorage.getItem('eduquest_quests_date');
+
+            if (savedDate === today) {
+                const saved = localStorage.getItem('eduquest_quests');
+                if (saved) {
+                    currentQuests = JSON.parse(saved);
+                    renderQuests();
+                    return;
+                }
+            }
+
+            // Generate new quests for today
+            currentQuests = generateDailyQuests();
+            localStorage.setItem('eduquest_quests', JSON.stringify(currentQuests));
+            localStorage.setItem('eduquest_quests_date', today);
+            renderQuests();
+        }
+
+        // Render quests
+        function renderQuests() {
+            const container = document.getElementById('questsContainer');
+            const filteredQuests = currentFilter === 'all'
+                ? currentQuests
+                : currentQuests.filter(q => q.subject === currentFilter);
+
+            if (filteredQuests.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">🎉</div>
+                        <h3>Nu sunt misiuni!</h3>
+                        <p>Ai completat totul sau nu există misiuni în această categorie.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Group by subject
+            const grouped = {};
+            filteredQuests.forEach(quest => {
+                if (!grouped[quest.subject]) {
+                    grouped[quest.subject] = [];
+                }
+                grouped[quest.subject].push(quest);
+            });
+
+            let html = '';
+            Object.keys(grouped).forEach(subject => {
+                const subjectQuests = grouped[subject];
+                const completed = subjectQuests.filter(q => q.completed).length;
+
+                html += `
+                    <div class="subject-section">
+                        <div class="subject-header">
+                            <div class="subject-icon subject-icon--${subject}">
+                                ${SUBJECT_ICONS[subject]}
+                            </div>
+                            <span class="subject-title">${SUBJECT_NAMES[subject]}</span>
+                            <span class="subject-progress">${completed}/${subjectQuests.length}</span>
+                        </div>
+                        <div class="quest-list">
+                            ${subjectQuests.map(quest => renderQuestCard(quest)).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Render single quest card
+        function renderQuestCard(quest) {
+            const difficultyLabels = {
+                easy: 'Ușor',
+                medium: 'Mediu',
+                hard: 'Greu'
+            };
+
+            return `
+                <div class="quest-card quest-card--${quest.subject}" onclick="startQuest(${quest.id})">
+                    <div class="quest-icon quest-icon--${quest.subject}">
+                        ${SUBJECT_ICONS[quest.subject]}
+                    </div>
+                    <div class="quest-info">
+                        <div class="quest-title">
+                            ${quest.title}
+                            <span class="difficulty-badge difficulty-badge--${quest.difficulty}">
+                                ${difficultyLabels[quest.difficulty]}
+                            </span>
+                        </div>
+                        <div class="quest-meta">
+                            <span class="quest-points">+${quest.points} ⭐</span>
+                            <span>~${quest.duration} min</span>
+                        </div>
+                    </div>
+                    <div class="quest-status ${quest.completed ? 'quest-status--completed' : ''}">
+                        ${quest.completed ? '✓' : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Start a quest
+        function startQuest(questId) {
+            const quest = currentQuests.find(q => q.id === questId);
+            if (quest) {
+                localStorage.setItem('eduquest_current_quest', JSON.stringify(quest));
+                window.location.href = `exercise.html?quest=${questId}`;
+            }
+        }
+
+        // Generate new quests (refresh button)
+        function generateNewQuests() {
+            if (confirm('Vrei să generezi misiuni noi pentru azi?')) {
+                localStorage.removeItem('eduquest_quests');
+                localStorage.removeItem('eduquest_quests_date');
+                loadQuests();
+            }
+        }
+
+        // Filter tabs
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelector('.filter-tab--active').classList.remove('filter-tab--active');
+                tab.classList.add('filter-tab--active');
+                currentFilter = tab.dataset.filter;
+                renderQuests();
+            });
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadQuests);
+    </script>
+</body>
+
+</html>

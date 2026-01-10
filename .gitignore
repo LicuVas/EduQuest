@@ -1,0 +1,28 @@
+# Sensitive files
+config.json
+*.log
+
+# Data files (user progress stored locally)
+data/
+*.processed.json
+*.insights.json
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Session logs (keep README but ignore logs)
+SESSION_LOG.md
+
+# Service files (not needed for GitHub Pages)
+service/

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduQuest - Setări</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&subset=latin-ext&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../styles/main.css">
+    <style>
+        body {
+            background: #f4f6f9;
+        }
+
+        .settings-header {
+            background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+            color: white;
+            padding: var(--space-xl);
+        }
+
+        .settings-header h1 {
+            font-size: 1.6rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: var(--space-md);
+        }
+
+        .section-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--space-lg);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            color: var(--color-text);
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-md) 0;
+            border-bottom: 1px solid var(--color-bg);
+        }
+
+        .setting-item:last-child {
+            border: none;
+        }
+
+        .setting-label {
+            font-weight: 600;
+        }
+
+        .setting-desc {
+            font-size: 0.85rem;
+            color: var(--color-text-light);
+            margin-top: 4px;
+        }
+
+        .danger-zone {
+            background: rgba(225, 112, 85, 0.1);
+            border: 2px solid var(--color-error);
+        }
+
+        .danger-zone .section-title {
+            color: var(--color-error);
+        }
+
+        .btn-danger {
+            background: var(--color-error);
+            color: white;
+            border: none;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-danger:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background: var(--color-bg);
+            color: var(--color-text);
+            border: 1px solid #ddd;
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+        }
+
+        .success-msg {
+            background: rgba(0, 184, 148, 0.15);
+            color: #00B894;
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+            display: none;
+        }
+
+        .ip-display {
+            background: var(--color-bg);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            font-family: monospace;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="settings-header">
+        <a href="index.html" class="back-link">← Înapoi la Dashboard</a>
+        <h1>⚙️ Setări</h1>
+        <p>Configurare și administrare</p>
+    </header>
+
+    <div class="container">
+        <div id="successMsg" class="success-msg">✅ Operație reușită!</div>
+
+        <!-- Acces Telefon -->
+        <div class="section-card">
+            <h2 class="section-title">📱 Acces de pe Telefon</h2>
+            <p style="margin-bottom: var(--space-md);">Pentru a accesa EduQuest de pe telefoanele fetelor:</p>
+            <ol style="margin-left: var(--space-lg); margin-bottom: var(--space-md);">
+                <li>Conectați-vă la aceeași rețea WiFi</li>
+                <li>Pe telefon, deschide Chrome</li>
+                <li>Scrie adresa de mai jos:</li>
+            </ol>
+            <div class="ip-display" id="ipDisplay">
+                http://192.168.50.238:8080
+            </div>
+            <p style="margin-top: var(--space-md); font-size: 0.85rem; color: var(--color-text-light);">
+                💡 Sfat: Adaugă la ecranul principal pentru acces rapid ca o aplicație!
+            </p>
+        </div>
+
+        <!-- Statistici -->
+        <div class="section-card">
+            <h2 class="section-title">📊 Statistici Curente</h2>
+
+            <div class="setting-item">
+                <div>
+                    <div class="setting-label">🧽 Rebecca</div>
+                    <div class="setting-desc" id="rebiStats">Încărcare...</div>
+                </div>
+            </div>
+
+            <div class="setting-item">
+                <div>
+                    <div class="setting-label">🐱 Brianna</div>
+                    <div class="setting-desc" id="briStats">Încărcare...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reset Options -->
+        <div class="section-card danger-zone">
+            <h2 class="section-title">⚠️ Zonă Periculoasă</h2>
+
+            <div class="setting-item">
+                <div>
+                    <div class="setting-label">Resetează progres Rebecca</div>
+                    <div class="setting-desc">Șterge toate punctele și misiunile Rebeccăi</div>
+                </div>
+                <button class="btn-danger" onclick="resetProgress('rebecca')">Reset</button>
+            </div>
+
+            <div class="setting-item">
+                <div>
+                    <div class="setting-label">Resetează progres Brianna</div>
+                    <div class="setting-desc">Șterge toate punctele și misiunile Briannei</div>
+                </div>
+                <button class="btn-danger" onclick="resetProgress('brianna')">Reset</button>
+            </div>
+
+            <div class="setting-item">
+                <div>
+                    <div class="setting-label">Resetează TOTUL</div>
+                    <div class="setting-desc">Șterge toate datele pentru ambele fete</div>
+                </div>
+                <button class="btn-danger" onclick="resetAll()">Reset Tot</button>
+            </div>
+
+            <div class="setting-item">
+                <div>
+                    <div class="setting-label">Regenerează misiunile de azi</div>
+                    <div class="setting-desc">Creează noi misiuni zilnice</div>
+                </div>
+                <button class="btn-secondary" onclick="regenerateQuests()">Regenerează</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function loadStats() {
+            const rebiStats = JSON.parse(localStorage.getItem('eduquest_stats_rebecca') || '{"totalPoints":0,"questsCompleted":0,"streak":0}');
+            const briStats = JSON.parse(localStorage.getItem('eduquest_stats_brianna') || '{"totalPoints":0,"questsCompleted":0,"streak":0}');
+
+            document.getElementById('rebiStats').textContent =
+                `${rebiStats.totalPoints} puncte, ${rebiStats.questsCompleted} misiuni, streak: ${rebiStats.streak}`;
+            document.getElementById('briStats').textContent =
+                `${briStats.totalPoints} puncte, ${briStats.questsCompleted} misiuni, streak: ${briStats.streak}`;
+        }
+
+        function resetProgress(user) {
+            const name = user === 'rebecca' ? 'Rebecca' : 'Brianna';
+            if (!confirm(`Sigur vrei să resetezi progresul pentru ${name}? Această acțiune nu poate fi anulată!`)) {
+                return;
+            }
+
+            localStorage.removeItem(`eduquest_stats_${user}`);
+            showSuccess(`Progresul pentru ${name} a fost resetat!`);
+            loadStats();
+        }
+
+        function resetAll() {
+            if (!confirm('Sigur vrei să ȘTERGI TOATE DATELE? Această acțiune nu poate fi anulată!')) {
+                return;
+            }
+            if (!confirm('Ești ABSOLUT sigur? Toate punctele, badge-urile și progresul vor fi pierdute!')) {
+                return;
+            }
+
+            localStorage.removeItem('eduquest_stats_rebecca');
+            localStorage.removeItem('eduquest_stats_brianna');
+            localStorage.removeItem('eduquest_quests');
+            localStorage.removeItem('eduquest_quests_date');
+            localStorage.removeItem('eduquest_profile');
+
+            showSuccess('Toate datele au fost resetate!');
+            loadStats();
+        }
+
+        function regenerateQuests() {
+            localStorage.removeItem('eduquest_quests');
+            localStorage.removeItem('eduquest_quests_date');
+            showSuccess('Misiunile au fost regenerate! Fetele vor vedea misiuni noi.');
+        }
+
+        function showSuccess(message) {
+            const el = document.getElementById('successMsg');
+            el.textContent = '✅ ' + message;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', loadStats);
+    </script>
+</body>
+
+</html>

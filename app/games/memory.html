@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduQuest - Joc de Memorie</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&subset=latin-ext&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../styles/main.css">
+    <style>
+        .game-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: var(--space-md);
+            min-height: 100vh;
+        }
+
+        .game-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: var(--space-lg);
+            border-radius: var(--radius-xl);
+            margin-bottom: var(--space-xl);
+            text-align: center;
+        }
+
+        .game-header h1 {
+            margin-bottom: var(--space-xs);
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-xl);
+            margin-bottom: var(--space-lg);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--color-text-light);
+        }
+
+        .category-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+
+        .category-btn {
+            padding: var(--space-lg);
+            background: var(--color-card);
+            border: 3px solid var(--color-bg);
+            border-radius: var(--radius-lg);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            text-align: center;
+        }
+
+        .category-btn:hover {
+            border-color: var(--color-primary-light);
+            transform: translateY(-2px);
+        }
+
+        .category-btn.selected {
+            border-color: var(--color-primary);
+            background: rgba(108, 92, 231, 0.1);
+        }
+
+        .category-btn .emoji {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: var(--space-sm);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-sm);
+            margin-bottom: var(--space-xl);
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.4s;
+            transform-style: preserve-3d;
+        }
+
+        .memory-card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .card-front {
+            background: var(--gradient-primary);
+            color: white;
+            font-size: 2rem;
+        }
+
+        .card-back {
+            background: var(--color-card);
+            transform: rotateY(180deg);
+            border: 3px solid var(--color-bg);
+            font-size: 1.2rem;
+        }
+
+        .memory-card.matched .card-back {
+            background: rgba(0, 184, 148, 0.2);
+            border-color: var(--color-success);
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: var(--space-sm) var(--space-md);
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: var(--radius-lg);
+            color: var(--color-text-light);
+            text-decoration: none;
+            font-size: 0.9rem;
+            box-shadow: var(--shadow-sm);
+            z-index: 100;
+        }
+
+        .back-link:hover {
+            background: white;
+            color: var(--color-primary);
+        }
+
+        .game-complete {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .complete-card {
+            background: white;
+            padding: var(--space-xxl);
+            border-radius: var(--radius-xl);
+            text-align: center;
+            max-width: 320px;
+        }
+
+        .complete-icon {
+            font-size: 4rem;
+            margin-bottom: var(--space-md);
+        }
+
+        /* Timer display */
+        .timer-display {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .timer-display.timer-warning {
+            color: #f39c12;
+        }
+
+        .timer-display.timer-critical {
+            color: var(--color-error);
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../dashboard.html" class="back-link">← Înapoi</a>
+
+    <div class="game-container">
+        <div class="game-header">
+            <h1>🧠 Joc de Memorie</h1>
+            <p>Găsește perechile potrivite!</p>
+        </div>
+
+        <!-- Category Selection -->
+        <div id="categorySection">
+            <h3 class="section-title">Alege o categorie:</h3>
+            <div class="category-selector">
+                <button class="category-btn" onclick="startGame('animals')">
+                    <span class="emoji">🐾</span>
+                    Animale
+                </button>
+                <button class="category-btn" onclick="startGame('numbers')">
+                    <span class="emoji">🔢</span>
+                    Numere
+                </button>
+                <button class="category-btn" onclick="startGame('colors')">
+                    <span class="emoji">🎨</span>
+                    Culori
+                </button>
+                <button class="category-btn" onclick="startGame('fruits')">
+                    <span class="emoji">🍎</span>
+                    Fructe
+                </button>
+            </div>
+        </div>
+
+        <!-- Game Area -->
+        <div id="gameSection" style="display: none;">
+            <div class="game-stats">
+                <div class="stat">
+                    <div class="stat-value" id="moveCount">0</div>
+                    <div class="stat-label">Mișcări</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value timer-display" id="timerDisplay">2:00</div>
+                    <div class="stat-label">Timp</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="pairCount">0/8</div>
+                    <div class="stat-label">Perechi</div>
+                </div>
+            </div>
+
+            <div class="cards-grid" id="cardsGrid"></div>
+
+            <button class="btn btn--secondary btn--block" onclick="restartGame()">🔄 Restart</button>
+        </div>
+    </div>
+
+    <script>
+        // Game data - pairs for matching
+        const gameData = {
+            animals: [
+                { a: '🐱', b: 'pisică' },
+                { a: '🐕', b: 'câine' },
+                { a: '🐰', b: 'iepure' },
+                { a: '🐻', b: 'urs' },
+                { a: '🦁', b: 'leu' },
+                { a: '🐟', b: 'pește' },
+                { a: '🦋', b: 'fluture' },
+                { a: '🐦', b: 'pasăre' }
+            ],
+            numbers: [
+                { a: '1️⃣', b: 'UNU' },
+                { a: '2️⃣', b: 'DOI' },
+                { a: '3️⃣', b: 'TREI' },
+                { a: '4️⃣', b: 'PATRU' },
+                { a: '5️⃣', b: 'CINCI' },
+                { a: '6️⃣', b: 'ȘASE' },
+                { a: '7️⃣', b: 'ȘAPTE' },
+                { a: '8️⃣', b: 'OPT' }
+            ],
+            colors: [
+                { a: '🔴', b: 'roșu' },
+                { a: '🔵', b: 'albastru' },
+                { a: '🟢', b: 'verde' },
+                { a: '🟡', b: 'galben' },
+                { a: '🟠', b: 'portocaliu' },
+                { a: '🟣', b: 'mov' },
+                { a: '⚪', b: 'alb' },
+                { a: '⚫', b: 'negru' }
+            ],
+            fruits: [
+                { a: '🍎', b: 'măr' },
+                { a: '🍌', b: 'banană' },
+                { a: '🍊', b: 'portocală' },
+                { a: '🍇', b: 'struguri' },
+                { a: '🍓', b: 'căpșună' },
+                { a: '🍑', b: 'piersică' },
+                { a: '🍋', b: 'lămâie' },
+                { a: '🍉', b: 'pepene' }
+            ]
+        };
+
+        let cards = [];
+        let flipped = [];
+        let matched = [];
+        let moves = 0;
+        let isLocked = false;
+        let currentCategory = '';
+        let timerInterval = null;
+        let timeLeft = 120;
+
+        function shuffle(array) {
+            return [...array].sort(() => Math.random() - 0.5);
+        }
+
+        function startGame(category) {
+            currentCategory = category;
+            const pairs = gameData[category];
+
+            // Create cards
+            cards = [];
+            pairs.forEach((pair, i) => {
+                cards.push({ id: i * 2, pairId: i, content: pair.a });
+                cards.push({ id: i * 2 + 1, pairId: i, content: pair.b });
+            });
+
+            // Shuffle and reset
+            cards = shuffle(cards);
+            flipped = [];
+            matched = [];
+            moves = 0;
+            timeLeft = 120;
+
+            // Show game section
+            document.getElementById('categorySection').style.display = 'none';
+            document.getElementById('gameSection').style.display = 'block';
+
+            renderCards();
+            startTimer();
+        }
+
+        function renderCards() {
+            const grid = document.getElementById('cardsGrid');
+            grid.innerHTML = cards.map(card => `
+                <div class="memory-card" data-id="${card.id}" data-pair="${card.pairId}" onclick="flipCard(this)">
+                    <div class="card-inner">
+                        <div class="card-front">?</div>
+                        <div class="card-back">${card.content}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('moveCount').textContent = moves;
+            document.getElementById('pairCount').textContent = `${matched.length / 2}/${cards.length / 2}`;
+        }
+
+        function flipCard(card) {
+            if (isLocked) return;
+            if (card.classList.contains('flipped')) return;
+            if (matched.includes(card.dataset.id)) return;
+
+            card.classList.add('flipped');
+            flipped.push(card);
+
+            if (flipped.length === 2) {
+                moves++;
+                document.getElementById('moveCount').textContent = moves;
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            isLocked = true;
+            const [card1, card2] = flipped;
+
+            if (card1.dataset.pair === card2.dataset.pair) {
+                // Match!
+                matched.push(card1.dataset.id, card2.dataset.id);
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+
+                document.getElementById('pairCount').textContent =
+                    `${matched.length / 2}/${cards.length / 2}`;
+
+                flipped = [];
+                isLocked = false;
+
+                if (matched.length === cards.length) {
+                    gameComplete();
+                }
+            } else {
+                // No match
+                setTimeout(() => {
+                    card1.classList.remove('flipped');
+                    card2.classList.remove('flipped');
+                    flipped = [];
+                    isLocked = false;
+                }, 1000);
+            }
+        }
+
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    gameOver();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const timerEl = document.getElementById('timerDisplay');
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            timerEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+
+            timerEl.classList.remove('timer-warning', 'timer-critical');
+            if (timeLeft <= 10) {
+                timerEl.classList.add('timer-critical');
+            } else if (timeLeft <= 30) {
+                timerEl.classList.add('timer-warning');
+            }
+        }
+
+        function gameComplete() {
+            clearInterval(timerInterval);
+
+            const gameSection = document.getElementById('gameSection');
+            gameSection.innerHTML += `
+                <div class="game-complete">
+                    <div class="complete-card">
+                        <div class="complete-icon">🎉</div>
+                        <h2>Felicitări!</h2>
+                        <p>Ai găsit toate perechile în <strong>${moves}</strong> mișcări!</p>
+                        <p>Timp rămas: <strong>${Math.floor(timeLeft / 60)}:${(timeLeft % 60).toString().padStart(2, '0')}</strong></p>
+                        <button class="btn btn--primary btn--block" onclick="restartGame()" style="margin-top: var(--space-lg);">
+                            Joacă din nou
+                        </button>
+                        <button class="btn btn--secondary btn--block" onclick="window.location.href='../dashboard.html'" style="margin-top: var(--space-sm);">
+                            Înapoi la Dashboard
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // Save score
+            saveScore(moves, timeLeft);
+        }
+
+        function gameOver() {
+            const gameSection = document.getElementById('gameSection');
+            gameSection.innerHTML += `
+                <div class="game-complete">
+                    <div class="complete-card">
+                        <div class="complete-icon">⏰</div>
+                        <h2>Timpul a expirat!</h2>
+                        <p>Ai găsit <strong>${matched.length / 2}</strong> din <strong>${cards.length / 2}</strong> perechi.</p>
+                        <button class="btn btn--primary btn--block" onclick="restartGame()" style="margin-top: var(--space-lg);">
+                            Încearcă din nou
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function restartGame() {
+            clearInterval(timerInterval);
+            document.getElementById('categorySection').style.display = 'block';
+            document.getElementById('gameSection').style.display = 'none';
+
+            // Remove game complete overlay if exists
+            const overlay = document.querySelector('.game-complete');
+            if (overlay) overlay.remove();
+        }
+
+        function saveScore(moves, timeLeft) {
+            const user = localStorage.getItem('eduquest_profile') || 'guest';
+            const scores = JSON.parse(localStorage.getItem('eduquest_memory_scores') || '[]');
+            scores.push({
+                user,
+                category: currentCategory,
+                moves,
+                timeLeft,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem('eduquest_memory_scores', JSON.stringify(scores));
+        }
+    </script>
+</body>
+
+</html>
