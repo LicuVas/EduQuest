@@ -8,7 +8,7 @@ O platformă educațională gamificată pentru **întreaga familie** - copii și
 
 ## 🌐 Demo Live
 
-**[Accesează EduQuest](https://[username].github.io/EduQuest/app/)**
+**[Accesează EduQuest](https://licuvas.github.io/EduQuest/)**
 
 ## 🌟 Caracteristici
 
@@ -38,7 +38,7 @@ Accesează direct link-ul demo de mai sus - nu e nevoie de instalare!
 
 ```bash
 # Clonează repository-ul
-git clone https://github.com/[username]/EduQuest.git
+git clone https://github.com/LicuVas/EduQuest.git
 cd EduQuest
 
 # Pornește serverul local
@@ -109,7 +109,7 @@ Aplicația urmărește automat:
 - **Timp** - Durata pentru fiecare exercițiu
 - **Dificultate** - Ajustare automată bazată pe performanță
 
-Datele sunt stocate local în browser (localStorage).
+Datele sunt sincronizate automat cu Firebase pentru acces cross-device.
 
 ## 📈 Roadmap
 
@@ -120,9 +120,9 @@ Datele sunt stocate local în browser (localStorage).
 - [x] Sistem adaptiv dificultate
 - [x] Multi-profil familie
 - [x] GitHub Pages deployment
+- [x] Sincronizare cloud (Firebase)
 - [ ] Recompense reale (puncte → timp Roblox)
 - [ ] Export rapoarte PDF
-- [ ] Sincronizare cloud
 
 ## 🔐 Admin
 
