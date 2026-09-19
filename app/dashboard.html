@@ -191,6 +191,40 @@
             margin-bottom: var(--space-xs);
         }
 
+        .school-link {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            background: var(--color-card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md) var(--space-lg);
+            margin-bottom: var(--space-md);
+            box-shadow: var(--shadow-sm);
+            color: inherit;
+            text-decoration: none;
+            border-left: 4px solid #e17055;
+        }
+
+        .school-icon {
+            font-size: 2rem;
+        }
+
+        .school-text {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .school-text small {
+            color: var(--color-text-light);
+            font-size: 0.85rem;
+        }
+
+        .school-arrow {
+            font-size: 1.2rem;
+            color: var(--color-text-light);
+        }
+
         .reward-info p {
             font-size: 0.85rem;
             color: var(--color-text-light);
@@ -237,6 +271,12 @@
                 <p class="motivational-text" id="motivationalText">
                     "Fiecare pas mic te duce spre visuri mari!" ✨
                 </p>
+            </div>
+
+            <!-- School (doar pentru profilurile care au profile.school) -->
+            <div id="schoolSection" hidden>
+                <h3 class="section-title" id="schoolTitle">🏫 Școala</h3>
+                <div id="schoolLinks"></div>
             </div>
 
             <!-- Quick Actions -->
@@ -339,6 +379,9 @@
             }
             document.getElementById('header').style.background = profile.gradient;
 
+            // Școala: linkuri spre site-urile de școală ale profilului (ex. seral)
+            renderSchool(profile);
+
             // Load quests with cloud sync
             await loadQuests(userId);
 
@@ -348,6 +391,25 @@
 
             // Store current user
             localStorage.setItem('eduquest_profile', userId);
+        }
+
+        function renderSchool(profile) {
+            const section = document.getElementById('schoolSection');
+            if (!profile.school || !profile.school.links || !profile.school.links.length) {
+                section.hidden = true;
+                return;
+            }
+            document.getElementById('schoolTitle').textContent = `🏫 ${profile.school.title}`;
+            document.getElementById('schoolLinks').innerHTML = profile.school.links.map(l => `
+                <a class="school-link" href="${l.href}" target="_blank" rel="noopener">
+                    <span class="school-icon">${l.icon}</span>
+                    <span class="school-text">
+                        <strong>${l.label}</strong>
+                        <small>${l.desc}</small>
+                    </span>
+                    <span class="school-arrow">↗</span>
+                </a>`).join('');
+            section.hidden = false;
         }
 
         // Load quests with cloud sync

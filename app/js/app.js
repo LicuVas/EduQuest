@@ -34,11 +34,23 @@ const PROFILES = {
     nicoleta: {
         name: 'Nicoleta',
         nickname: 'Mama',
-        grade: 'A Doua Șansă',
+        grade: 'Clasa a XII-a · seral',
         avatarEmoji: '👩‍🎓',
         gradient: 'linear-gradient(135deg, #e17055 0%, #fdcb6e 100%)',
         subjects: ['matematica', 'romana', 'engleza', 'franceza', 'italiana', 'istorie', 'geografie'],
-        style: 'balanced'
+        style: 'balanced',
+        // Secțiunea „Școala” din dashboard: materiale pentru școala de la seral (site separat)
+        school: {
+            title: 'Școala · clasa a XII-a seral',
+            links: [
+                {
+                    href: 'https://teste-tic-seral.pages.dev/',
+                    icon: '💻',
+                    label: 'TIC · teste de antrenament',
+                    desc: 'Sistemul de operare, fișiere, foldere: teorie + 30 de întrebări'
+                }
+            ]
+        }
     }
 };
 
