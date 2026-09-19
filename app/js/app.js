@@ -44,10 +44,10 @@ const PROFILES = {
             title: 'Școala · clasa a XII-a seral',
             links: [
                 {
-                    href: 'https://teste-tic-seral.pages.dev/',
-                    icon: '💻',
-                    label: 'TIC · teste de antrenament',
-                    desc: 'Sistemul de operare, fișiere, foldere: teorie + 30 de întrebări'
+                    href: 'https://teste-scoala-seral.pages.dev/',
+                    icon: '📝',
+                    label: 'Teste de antrenament pe materii',
+                    desc: 'TIC: sistemul de operare, fișiere, foldere. Celelalte materii apar acolo pe rând.'
                 }
             ]
         }
