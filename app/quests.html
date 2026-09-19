@@ -179,14 +179,8 @@
             <p>Completează misiuni și câștigă puncte!</p>
         </header>
 
-        <!-- Filter Tabs -->
-        <div class="filter-tabs">
-            <button class="filter-tab filter-tab--active" data-filter="all">Toate</button>
-            <button class="filter-tab" data-filter="romana">📕 Română</button>
-            <button class="filter-tab" data-filter="matematica">🔢 Matematică</button>
-            <button class="filter-tab" data-filter="engleza">🇬🇧 Engleză</button>
-            <button class="filter-tab" data-filter="bonus">⭐ Bonus</button>
-        </div>
+        <!-- Filter Tabs — populate after profile subjects -->
+        <div class="filter-tabs" id="filterTabs"></div>
 
         <!-- Quests List -->
         <div class="quests-container" id="questsContainer">
@@ -243,6 +237,12 @@
                     { title: 'Colors & Numbers', description: 'Quiz rapid', points: 15, difficulty: 'easy', duration: 5 },
                     { title: 'Read aloud', description: 'Citește un text scurt', points: 25, difficulty: 'medium', duration: 7 },
                     { title: 'Fill in the blanks', description: 'Completează propozițiile', points: 20, difficulty: 'medium', duration: 8 }
+                ],
+                informatica: [
+                    { title: 'Fișiere și foldere', description: 'Ce e un folder, cum salvezi', points: 20, difficulty: 'easy', duration: 8 },
+                    { title: 'Salvează documentul', description: 'Ctrl+S și numele fișierului', points: 15, difficulty: 'easy', duration: 6 },
+                    { title: 'Extensii de fișiere', description: '.docx, .jpg, .mp3', points: 20, difficulty: 'medium', duration: 8 },
+                    { title: 'Siguranță pe internet', description: 'Nu trimite parola', points: 20, difficulty: 'easy', duration: 7 }
                 ],
                 bonus: [
                     { title: 'Puzzle logic', description: 'Rezolvă un puzzle', points: 30, difficulty: 'medium', duration: 10 },
@@ -309,14 +309,8 @@
                     { title: 'File I/O', description: 'Citește/scrie fișiere', points: 25, difficulty: 'easy', duration: 12 },
                     { title: 'APIs cu requests', description: 'Fetch data de pe web', points: 35, difficulty: 'medium', duration: 20 },
                     { title: 'Automation Script', description: 'Script pentru task zilnic', points: 45, difficulty: 'hard', duration: 35 }
-                ],
-                english_literature: [
-                    { title: 'Shakespeare', description: 'Analizează un sonet', points: 35, difficulty: 'hard', duration: 25 },
-                    { title: 'Victorian Era', description: 'Dicție și temele majore', points: 30, difficulty: 'medium', duration: 20 },
-                    { title: 'Modernism', description: 'T.S. Eliot, Woolf', points: 35, difficulty: 'hard', duration: 25 },
-                    { title: 'Essay Analysis', description: 'Comentariu de text', points: 40, difficulty: 'hard', duration: 30 },
-                    { title: 'Titularizare Prep', description: 'Subiect rezolvat', points: 50, difficulty: 'hard', duration: 45 }
                 ]
+                // english_literature scos 2026-09-19: Tata nu are exerciții Shakespeare; materiile = PROFILES (AHK, grammar, C++, Python)
             },
             // NICOLETA - Clasa a XII-a seral
             nicoleta: {
@@ -381,7 +375,8 @@
             english_grammar: '📖',
             cpp: '💻',
             python: '🐍',
-            english_literature: '📚',
+            informatica: '💻',
+            // english_literature: scos din profilul Tata (2026-09-19)
             franceza: '🇫🇷',
             italiana: '🇮🇹',
             istorie: '🏛️',
@@ -397,7 +392,7 @@
             english_grammar: 'English Grammar',
             cpp: 'C++ Programming',
             python: 'Python',
-            english_literature: 'English Literature',
+            informatica: 'Informatică',
             franceza: 'Limba Franceză',
             italiana: 'Limba Italiană',
             istorie: 'Istorie',
@@ -407,10 +402,45 @@
         let currentFilter = 'all';
         let currentQuests = [];
 
+        function currentUserId() {
+            return new URLSearchParams(window.location.search).get('user')
+                || localStorage.getItem('eduquest_profile') || 'rebecca';
+        }
+
+        function questsStorageKey(userId) {
+            return `eduquest_quests_${userId}`;
+        }
+
+        function questsDateKey(userId) {
+            return `eduquest_quests_date_${userId}`;
+        }
+
+        function profileSubjects(userId) {
+            const templates = QUEST_TEMPLATES[userId] || {};
+            return Object.keys(templates).filter(s => s !== 'bonus');
+        }
+
+        function renderFilters(userId) {
+            const tabs = document.getElementById('filterTabs');
+            if (!tabs) return;
+            const subjects = profileSubjects(userId);
+            tabs.innerHTML = `<button class="filter-tab filter-tab--active" data-filter="all">Toate</button>` +
+                subjects.map(s => `<button class="filter-tab" data-filter="${s}">${SUBJECT_ICONS[s] || ''} ${SUBJECT_NAMES[s] || s}</button>`).join('');
+            tabs.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const active = tabs.querySelector('.filter-tab--active');
+                    if (active) active.classList.remove('filter-tab--active');
+                    tab.classList.add('filter-tab--active');
+                    currentFilter = tab.dataset.filter;
+                    renderQuests();
+                });
+            });
+        }
+
         // Generate daily quests
         function generateDailyQuests() {
-            const userId = localStorage.getItem('eduquest_profile') || 'rebecca';
-            const templates = QUEST_TEMPLATES[userId];
+            const userId = currentUserId();
+            const templates = QUEST_TEMPLATES[userId] || QUEST_TEMPLATES.rebecca;
             const quests = [];
             let id = 1;
 
@@ -434,13 +464,17 @@
             return quests;
         }
 
-        // Load or generate quests
+        // Load or generate quests — cheie localStorage per profil
         function loadQuests() {
+            const userId = currentUserId();
+            localStorage.setItem('eduquest_profile', userId);
+            renderFilters(userId);
+
             const today = new Date().toDateString();
-            const savedDate = localStorage.getItem('eduquest_quests_date');
+            const savedDate = localStorage.getItem(questsDateKey(userId));
 
             if (savedDate === today) {
-                const saved = localStorage.getItem('eduquest_quests');
+                const saved = localStorage.getItem(questsStorageKey(userId));
                 if (saved) {
                     currentQuests = JSON.parse(saved);
                     renderQuests();
@@ -450,8 +484,8 @@
 
             // Generate new quests for today
             currentQuests = generateDailyQuests();
-            localStorage.setItem('eduquest_quests', JSON.stringify(currentQuests));
-            localStorage.setItem('eduquest_quests_date', today);
+            localStorage.setItem(questsStorageKey(userId), JSON.stringify(currentQuests));
+            localStorage.setItem(questsDateKey(userId), today);
             renderQuests();
         }
 
@@ -540,31 +574,23 @@
 
         // Start a quest
         function startQuest(questId) {
+            const userId = currentUserId();
             const quest = currentQuests.find(q => q.id === questId);
             if (quest) {
                 localStorage.setItem('eduquest_current_quest', JSON.stringify(quest));
-                window.location.href = `exercise.html?quest=${questId}`;
+                window.location.href = `exercise.html?quest=${questId}&user=${userId}`;
             }
         }
 
         // Generate new quests (refresh button)
         function generateNewQuests() {
             if (confirm('Vrei să generezi misiuni noi pentru azi?')) {
-                localStorage.removeItem('eduquest_quests');
-                localStorage.removeItem('eduquest_quests_date');
+                const userId = currentUserId();
+                localStorage.removeItem(questsStorageKey(userId));
+                localStorage.removeItem(questsDateKey(userId));
                 loadQuests();
             }
         }
-
-        // Filter tabs
-        document.querySelectorAll('.filter-tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelector('.filter-tab--active').classList.remove('filter-tab--active');
-                tab.classList.add('filter-tab--active');
-                currentFilter = tab.dataset.filter;
-                renderQuests();
-            });
-        });
 
         // Initialize
         document.addEventListener('DOMContentLoaded', loadQuests);

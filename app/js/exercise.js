@@ -1421,9 +1421,46 @@ let quest, questions = [], qIndex = 0, score = 0, selected = null;
 function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
 function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
 
+function lookupQuest(user, questId) {
+    if (questId == null || questId === '') return null;
+    const match = (q) => q && (q.id === Number(questId) || String(q.id) === String(questId));
+    try {
+        const saved = JSON.parse(localStorage.getItem(`eduquest_quests_${user}`) || 'null');
+        if (Array.isArray(saved)) {
+            const found = saved.find(match);
+            if (found && found.subject) return found;
+        }
+    } catch (e) { /* ignore */ }
+    const sample = (typeof SAMPLE_QUESTS !== 'undefined' && SAMPLE_QUESTS[user])
+        || (window.EduQuest && window.EduQuest.SAMPLE_QUESTS && window.EduQuest.SAMPLE_QUESTS[user])
+        || null;
+    if (sample) {
+        const found = sample.find(match);
+        if (found && found.subject) return found;
+    }
+    return null;
+}
+
 function init() {
-    quest = JSON.parse(localStorage.getItem('eduquest_current_quest') || '{"subject":"matematica","title":"Test","points":20}');
-    const user = localStorage.getItem('eduquest_profile') || 'rebecca';
+    const params = new URLSearchParams(window.location.search);
+    const user = params.get('user') || localStorage.getItem('eduquest_profile') || 'rebecca';
+    if (params.get('user')) {
+        localStorage.setItem('eduquest_profile', user);
+    }
+
+    let stored = null;
+    try {
+        stored = JSON.parse(localStorage.getItem('eduquest_current_quest') || 'null');
+    } catch (e) {
+        stored = null;
+    }
+
+    // URL ?quest=&user= bate un current_quest rămas de la alt profil. Fără default matematică.
+    const fromUrl = lookupQuest(user, params.get('quest'));
+    quest = fromUrl || (stored && stored.subject ? stored : null);
+    if (!quest || !quest.subject) {
+        quest = { subject: '', title: 'Alege o misiune', points: 0 };
+    }
 
     document.getElementById('questTitle').textContent = quest.title;
     const subjectNames = {
@@ -1666,11 +1703,11 @@ function complete() {
 
     // Mark quest as completed in quest list
     try {
-        const savedQuests = JSON.parse(localStorage.getItem('eduquest_quests') || '[]');
+        const savedQuests = JSON.parse(localStorage.getItem(`eduquest_quests_${user}`) || '[]');
         const questIndex = savedQuests.findIndex(q => q.id === quest.id);
         if (questIndex >= 0) {
             savedQuests[questIndex].completed = true;
-            localStorage.setItem('eduquest_quests', JSON.stringify(savedQuests));
+            localStorage.setItem(`eduquest_quests_${user}`, JSON.stringify(savedQuests));
         }
     } catch (e) { }
 

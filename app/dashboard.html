@@ -421,6 +421,8 @@
             section.hidden = false;
         }
 
+        let dashboardQuests = [];
+
         // Load quests with cloud sync
         async function loadQuests(userId) {
             const questList = document.getElementById('questList');
@@ -432,6 +434,7 @@
             } else {
                 quests = getUserQuests(userId);
             }
+            dashboardQuests = quests || [];
 
             // Update progress display
             const completed = quests.filter(q => q.completed).length;
@@ -457,9 +460,24 @@
             `).join('');
         }
 
-        // Start a quest
+        // Start a quest — scrie materia din SAMPLE_QUESTS, fără default matematică
         function startQuest(questId) {
-            const userId = localStorage.getItem('eduquest_profile') || 'rebecca';
+            const userId = new URLSearchParams(window.location.search).get('user')
+                || localStorage.getItem('eduquest_profile') || 'rebecca';
+            const fromDash = dashboardQuests.find(q => q.id === questId);
+            const fromSaved = (typeof getUserQuests === 'function' ? getUserQuests(userId) : []).find(q => q.id === questId);
+            const fromSample = ((typeof SAMPLE_QUESTS !== 'undefined' && SAMPLE_QUESTS[userId]) || []).find(q => q.id === questId);
+            const quest = fromDash || fromSaved || fromSample;
+            if (quest && quest.subject) {
+                localStorage.setItem('eduquest_current_quest', JSON.stringify({
+                    id: quest.id,
+                    subject: quest.subject,
+                    title: quest.title,
+                    points: quest.points
+                }));
+            } else {
+                localStorage.removeItem('eduquest_current_quest');
+            }
             window.location.href = `exercise.html?quest=${questId}&user=${userId}`;
         }
 
