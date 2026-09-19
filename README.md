@@ -24,10 +24,10 @@ O platformă educațională gamificată pentru **întreaga familie** - copii și
 
 | Membru | Nivel | Mascotă | Subiecte |
 |--------|-------|---------|----------|
-| **Rebecca** | Clasa III | 🎮 Roblox Avatar | Română, Matematică, Engleză, Informatică |
-| **Brianna** | Clasa I | 🎮 Roblox Avatar | Română, Matematică, Engleză |
+| **Rebecca** | Clasa a IV-a | 🎮 Roblox Avatar | Română, Matematică, Engleză, Informatică |
+| **Brianna** | Clasa a II-a | 🎮 Roblox Avatar | Română, Matematică, Engleză |
 | **Tata** | Avansat | 👨‍💻 | AHK, C++, Python, Engleză |
-| **Nicoleta** | A Doua Șansă | 👩‍🎓 | Mat, Ro, En, Fr, It, Istorie, Geo |
+| **Nicoleta** | Clasa a XII-a seral | 👩‍🎓 | Mat, Ro, En, Fr, It, Istorie, Geo |
 
 ## 🚀 Utilizare
 

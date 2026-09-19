@@ -1,6 +1,9 @@
 {
   "clasa": 1,
   "an_scolar": "2025-2026",
+  "status": "depasit",
+  "inlocuit_de": "programa_clasa_II.json",
+  "nota": "An școlar încheiat. Păstrat ca arhivă. Anul curent 2026-2027: clasa a II-a (Brianna).",
   "discipline": {
     "matematica_explorarea_mediului": {
       "denumire": "Matematică și explorarea mediului",

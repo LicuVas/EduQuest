@@ -14,41 +14,43 @@ Create a comprehensive, AI-powered educational support system for Rebecca and Br
 
 ### Rebecca (Re, Rebi)
 - **Born:** 2016-07-07
-- **Age:** 9 years old (as of Jan 2026)
-- **Grade:** Clasa a III-a (3rd grade, 2025-2026)
+- **Age:** 10 years old (as of Sept 2026)
+- **Grade:** Clasa a IV-a (4th grade, 2026-2027)
+- **Archived:** programa anterioară în `curriculum/programa_clasa_III.json` (status: depasit)
 - **Focus Areas:**
-  - Romanian reading & writing (citire, scriere)
-  - English (beginner-intermediate)
-  - Mathematics (arithmetic, simple problems)
-  - Romanian curriculum subjects
+  - Romanian reading & writing (citire, scriere, gramatică)
+  - English (A1+)
+  - Mathematics (numere 0–1 000 000, fracții, zecimale, perimetru/arie)
+  - Informatică (fișiere, foldere)
 
 ### Brianna (Bri, Briosh, Bryosh)
 - **Born:** 2018-06-08
-- **Age:** 7 years old (as of Jan 2026)
-- **Grade:** Clasa I (1st grade, 2025-2026)
+- **Age:** 8 years old (as of Sept 2026)
+- **Grade:** Clasa a II-a (2nd grade, 2026-2027)
+- **Archived:** programa anterioară în `curriculum/programa_clasa_I.json` (status: depasit)
 - **Focus Areas:**
-  - Romanian reading (learning to read)
+  - Romanian reading (propoziții, texte scurte)
   - English (beginner, vocabulary)
-  - Mathematics (counting, basic operations)
-  - Motor skills, coloring, writing
+  - Mathematics (numere 0–100, adunare/scădere cu trecere)
+  - Writing short sentences
 
 ---
 
 ## Core Subjects
 
 ### 1. Romanian Language (Limba Română)
-- **Rebecca (Clasa III):**
+- **Rebecca (Clasa a IV-a):**
   - Reading comprehension
   - Dictation (dictări)
-  - Grammar basics (substantiv, verb, adjectiv)
+  - Grammar (substantiv, verb, adjectiv, pronume)
   - Creative writing
   - Poezii și povești
 
-- **Brianna (Clasa I):**
-  - Letter recognition
-  - Syllable building
+- **Brianna (Clasa a II-a):**
+  - Reading short texts
+  - Writing sentences
   - Simple words and sentences
-  - Abecedar activities
+  - Nouns and verbs (intro)
 
 ### 2. English Language (Limba Engleză)
 - **Rebecca:**
@@ -64,17 +66,17 @@ Create a comprehensive, AI-powered educational support system for Rebecca and Br
   - Visual flashcards
 
 ### 3. Mathematics (Matematică)
-- **Rebecca (Clasa III):**
-  - Addition/subtraction up to 1000
-  - Multiplication tables (1-5)
-  - Simple division
+- **Rebecca (Clasa a IV-a):**
+  - Numbers 0–1 000 000
+  - All four operations
+  - Fractions and decimals
   - Word problems
-  - Geometric shapes
+  - Perimeter and area
 
-- **Brianna (Clasa I):**
+- **Brianna (Clasa a II-a):**
   - Numbers 0-100
-  - Addition/subtraction to 20
-  - Counting objects
+  - Addition/subtraction to 100 (with regrouping)
+  - Repeated addition (intro to multiplication)
   - Simple patterns
   - Shapes recognition
 
@@ -207,8 +209,9 @@ DaughtersEducation/
 ## Resources
 
 ### Romanian Curriculum:
-- Programa școlară clasa I
-- Programa școlară clasa a III-a
+- Programa școlară clasa a II-a (2026-2027) — `curriculum/programa_clasa_II.json`
+- Programa școlară clasa a IV-a (2026-2027) — `curriculum/programa_clasa_IV.json`
+- Arhivă (depasit): `curriculum/programa_clasa_I.json`, `curriculum/programa_clasa_III.json`
 - Manuale.edu.ro
 
 ### English Resources:
@@ -234,4 +237,5 @@ DaughtersEducation/
 ---
 
 **Created:** 2026-01-08
-**Status:** Initial Setup
+**Updated:** 2026-09-19 (anul curent 2026-2027: Rebecca IV, Brianna II)
+**Status:** Anul școlar 2026-2027

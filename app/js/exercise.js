@@ -1,23 +1,24 @@
-// Exercise Engine for EduQuest - FIXED VERSION
-// Proper age-appropriate content for each grade level
+// Exercise Engine for EduQuest
+// Content by profile and current school year 2026-2027
 
 // ============================================
-// CLASA I - BRIANNA (7 ani)
-// Matematică: numere 0-20, adunări/scăderi simple
-// Română: litere, silabe, cuvinte simple
-// Engleză: culori, numere, animale de bază
+// CLASA II - BRIANNA
+// Matematică: numere 0-100, adunări/scăderi cu trecere
+// Română: propoziții, texte scurte
+// Engleză: culori, numere 1-20, familie, animale
 // ============================================
 
 // ============================================
-// CLASA III - REBECCA (9 ani)  
-// Matematică: numere 0-1000, înmulțire până la 5
-// Română: substantive, verbe, adjective, propoziții
-// Engleză: vocabular 300+ cuvinte, propoziții simple
+// CLASA IV - REBECCA
+// Matematică: 0-1 000 000, fracții, zecimale, perimetru/arie
+// Română: gramatică, lectură, compunere
+// Engleză: vocabular A1+, propoziții
+// Informatică: fișiere, foldere
 // ============================================
 
 const EXERCISES = {
     matematica: {
-        // BRIANNA - Clasa I - FOARTE SIMPLU (0-20) - TEXT MINIMAL, EMOJI-URI
+        // BRIANNA - Clasa a II-a - numere 0-100
         brianna: [
             // Adunări simple 0-10
             {
@@ -222,10 +223,30 @@ const EXERCISES = {
                 type: 'choice', q: '🍪🍪🍪 mănânci 🍪 - câte rămân?', gen: () => {
                     return { vars: {}, opts: shuffle([2, 1, 3, 4]), ans: 2, hint: '3-1=2' };
                 }
+            },
+            // Clasa a II-a: 0-100
+            {
+                type: 'math', q: '{a} + {b} = ?', gen: () => {
+                    const a = rand(20, 50), b = rand(10, 40);
+                    return { vars: { a, b }, ans: a + b, hint: 'Zeci, apoi unități' };
+                }
+            },
+            {
+                type: 'math', q: '{a} - {b} = ?', gen: () => {
+                    const a = rand(40, 90), b = rand(10, 35);
+                    return { vars: { a, b }, ans: a - b, hint: 'Scade unitățile, apoi zecile' };
+                }
+            },
+            {
+                type: 'choice', q: 'Care e mai mare: {a} sau {b}?', gen: () => {
+                    let a = rand(10, 99), b = rand(10, 99);
+                    if (a === b) b = a + 1;
+                    return { vars: { a, b }, opts: [a, b], ans: Math.max(a, b), hint: 'Compară zecile' };
+                }
             }
         ],
 
-        // REBECCA - Clasa III - Moderat (0-100, înmulțiri simple)
+        // REBECCA - Clasa a IV-a - 0-1 000 000, fracții, zecimale
         rebecca: [
             // Adunări 0-100
             {
@@ -381,11 +402,45 @@ const EXERCISES = {
                     return { vars: { n }, opts: shuffle([rounded, rounded + 10, rounded - 10, n]), ans: rounded, hint: '5+ → sus' };
                 }
             }
+        ],
+
+        // NICOLETA - clasa a XII-a seral
+        nicoleta: [
+            {
+                type: 'math', q: 'Rezolvă: {a}x + {b} = {c}. x = ?', gen: () => {
+                    const a = rand(2, 9), x = rand(2, 12), b = rand(1, 20);
+                    const c = a * x + b;
+                    return { vars: { a, b, c }, ans: x, hint: 'x = (c − b) / a' };
+                }
+            },
+            {
+                type: 'math', q: '{p}% din {n} = ?', gen: () => {
+                    const p = [10, 20, 25, 50][rand(0, 3)];
+                    const n = rand(2, 12) * 10;
+                    return { vars: { p, n }, ans: n * p / 100, hint: `${p}/100 × ${n}` };
+                }
+            },
+            {
+                type: 'choice', q: 'f(x) = 2x + 3. Cât e f(4)?', gen: () => {
+                    return { vars: {}, opts: shuffle([11, 8, 10, 14]), ans: 11, hint: '2×4 + 3' };
+                }
+            },
+            {
+                type: 'choice', q: 'Aria unui dreptunghi 8 × 5 = ?', gen: () => {
+                    return { vars: {}, opts: shuffle([40, 26, 13, 45]), ans: 40, hint: 'L × l' };
+                }
+            },
+            {
+                type: 'math', q: 'Sistem: x + y = {s}, x − y = {d}. x = ?', gen: () => {
+                    const x = rand(5, 15), y = rand(1, 8);
+                    return { vars: { s: x + y, d: x - y }, ans: x, hint: 'Adună cele două ecuații' };
+                }
+            }
         ]
     },
 
     romana: {
-        // BRIANNA - Clasa I - Litere și silabe - TEXT MINIMAL
+        // BRIANNA - Clasa a II-a - citire și propoziții
         brianna: [
             // Recunoaștere litere
             {
@@ -583,7 +638,7 @@ const EXERCISES = {
             }
         ],
 
-        // REBECCA - Clasa III - Gramatică
+        // REBECCA - Clasa a IV-a - Gramatică
         rebecca: [
             // Părți de vorbire
             {
@@ -735,11 +790,35 @@ const EXERCISES = {
                     return { vars: {}, opts: shuffle(['Pisica mănâncă pește', 'mănâncă Pisica pește', 'pește mănâncă Pisica', 'Pisica pește mănâncă']), ans: 'Pisica mănâncă pește', hint: 'Subiect + Predicat + Complement' };
                 }
             }
+        ],
+
+        // NICOLETA - clasa a XII-a seral
+        nicoleta: [
+            {
+                type: 'choice', q: 'Genul literar al romanului este:', gen: () => {
+                    return { vars: {}, opts: shuffle(['epic', 'liric', 'dramatic', 'didactic']), ans: 'epic', hint: 'Narațiune + personaje' };
+                }
+            },
+            {
+                type: 'choice', q: 'Figura de stil din „pădurea de argint” este:', gen: () => {
+                    return { vars: {}, opts: shuffle(['metaforă', 'enumerație', 'repetiție', 'invocație']), ans: 'metaforă', hint: 'Identificare, nu comparație cu „ca”' };
+                }
+            },
+            {
+                type: 'choice', q: 'Predicatul din „Elevii învață lecția” este:', gen: () => {
+                    return { vars: {}, opts: shuffle(['învață', 'Elevii', 'lecția', 'Elevii învață']), ans: 'învață', hint: 'Ce se spune despre subiect' };
+                }
+            },
+            {
+                type: 'choice', q: '„Ion” de Rebreanu este:', gen: () => {
+                    return { vars: {}, opts: shuffle(['roman realist', 'nuvelă fantastică', 'poezie lirică', 'basm cult']), ans: 'roman realist', hint: 'Proză de observație socială' };
+                }
+            }
         ]
     },
 
     engleza: {
-        // BRIANNA - Clasa I - TEXT MINIMAL, EMOJI-URI
+        // BRIANNA - Clasa a II-a - vocabular A1
         brianna: [
             // Culori - VIZUAL
             {
@@ -931,7 +1010,7 @@ const EXERCISES = {
             }
         ],
 
-        // REBECCA - Clasa III
+        // REBECCA - Clasa a IV-a
         rebecca: [
             // Vocabular mai avansat
             {
@@ -1084,6 +1163,255 @@ const EXERCISES = {
                     return { vars: {}, opts: shuffle(['twenty', 'twoty', 'twoteen', 'twelve']), ans: 'twenty', hint: 'two + nty' };
                 }
             }
+        ],
+
+        // NICOLETA - clasa a XII-a seral
+        nicoleta: [
+            {
+                type: 'choice', q: 'Past of „go”:', gen: () => {
+                    return { vars: {}, opts: shuffle(['went', 'goed', 'gone', 'going']), ans: 'went', hint: 'Irregular' };
+                }
+            },
+            {
+                type: 'choice', q: 'Complete: She ___ to school every day.', gen: () => {
+                    return { vars: {}, opts: shuffle(['goes', 'go', 'going', 'gone']), ans: 'goes', hint: 'Present Simple, 3rd person' };
+                }
+            },
+            {
+                type: 'choice', q: '„If I had time, I would travel” is:', gen: () => {
+                    return { vars: {}, opts: shuffle(['2nd conditional', '1st conditional', '0 conditional', '3rd conditional']), ans: '2nd conditional', hint: 'if + past, would + V' };
+                }
+            },
+            {
+                type: 'choice', q: 'Opposite of „expensive”:', gen: () => {
+                    return { vars: {}, opts: shuffle(['cheap', 'rich', 'large', 'early']), ans: 'cheap', hint: 'price' };
+                }
+            }
+        ]
+    },
+
+    informatica: {
+        rebecca: [
+            {
+                type: 'choice', q: 'Un folder este:', gen: () => {
+                    return { vars: {}, opts: shuffle(['un loc pentru fișiere', 'un program de desen', 'o imprimantă', 'un site']), ans: 'un loc pentru fișiere', hint: 'Dosar pe disc' };
+                }
+            },
+            {
+                type: 'choice', q: 'Ca să salvezi un document apeși de obicei:', gen: () => {
+                    return { vars: {}, opts: shuffle(['Ctrl+S', 'Ctrl+C', 'Alt+F4', 'Esc']), ans: 'Ctrl+S', hint: 'Save' };
+                }
+            },
+            {
+                type: 'choice', q: 'Pe internet NU trimiți:', gen: () => {
+                    return { vars: {}, opts: shuffle(['parola', 'o poză cu o floare', 'un desen', 'un salut']), ans: 'parola', hint: 'Date personale' };
+                }
+            },
+            {
+                type: 'choice', q: 'Fișierul „tema.docx” e de obicei:', gen: () => {
+                    return { vars: {}, opts: shuffle(['document Word', 'imagine', 'film', 'melodie']), ans: 'document Word', hint: 'Extensia .docx' };
+                }
+            }
+        ]
+    },
+
+    autohotkey: {
+        tata: [
+            {
+                type: 'choice', q: 'În AHK v1, `::` după o tastă definește:', gen: () => {
+                    return { vars: {}, opts: shuffle(['un hotkey', 'o funcție', 'un GUI', 'un include']), ans: 'un hotkey', hint: 'Hotkey:: acțiune' };
+                }
+            },
+            {
+                type: 'choice', q: 'IniRead citește din:', gen: () => {
+                    return { vars: {}, opts: shuffle(['fișier .ini', 'registrul Windows', 'clipboard', 'JSON']), ans: 'fișier .ini', hint: 'IniRead, OutVar, File, Sec, Key' };
+                }
+            },
+            {
+                type: 'choice', q: 'Send, {Enter} trimite:', gen: () => {
+                    return { vars: {}, opts: shuffle(['tasta Enter', 'textul {Enter}', 'un click', 'Alt+F4']), ans: 'tasta Enter', hint: 'acolade = tastă' };
+                }
+            },
+            {
+                type: 'choice', q: 'CoordMode, Mouse, Screen măsoară față de:', gen: () => {
+                    return { vars: {}, opts: shuffle(['ecran', 'fereastra activă', 'client area', 'taskbar']), ans: 'ecran', hint: 'Screen vs Window' };
+                }
+            }
+        ]
+    },
+
+    english_grammar: {
+        tata: [
+            {
+                type: 'choice', q: '„I have been working” is:', gen: () => {
+                    return { vars: {}, opts: shuffle(['present perfect continuous', 'past simple', 'past perfect', 'future perfect']), ans: 'present perfect continuous', hint: 'have been + V-ing' };
+                }
+            },
+            {
+                type: 'choice', q: 'Correct: If I ___ you, I would wait.', gen: () => {
+                    return { vars: {}, opts: shuffle(['were', 'was', 'am', 'be']), ans: 'were', hint: 'subjunctive in 2nd conditional' };
+                }
+            },
+            {
+                type: 'choice', q: 'Reported: He said, „I am tired.” → He said he ___ tired.', gen: () => {
+                    return { vars: {}, opts: shuffle(['was', 'is', 'were', 'been']), ans: 'was', hint: 'backshift present → past' };
+                }
+            },
+            {
+                type: 'choice', q: 'Which is a phrasal verb?', gen: () => {
+                    return { vars: {}, opts: shuffle(['give up', 'quickly run', 'very tired', 'the book']), ans: 'give up', hint: 'verb + particle' };
+                }
+            }
+        ]
+    },
+
+    cpp: {
+        tata: [
+            {
+                type: 'choice', q: 'În C++, `int *p;` declară:', gen: () => {
+                    return { vars: {}, opts: shuffle(['un pointer la int', 'un int', 'un array', 'o referință']), ans: 'un pointer la int', hint: '* lângă tip' };
+                }
+            },
+            {
+                type: 'choice', q: 'STL container cu cheie unică sortată:', gen: () => {
+                    return { vars: {}, opts: shuffle(['std::set', 'std::vector', 'std::list', 'std::stack']), ans: 'std::set', hint: 'ordered unique keys' };
+                }
+            },
+            {
+                type: 'choice', q: 'Destructorul unei clase se numește:', gen: () => {
+                    return { vars: {}, opts: shuffle(['~NumeClasa', 'delete NumeClasa', 'free()', 'NumeClasa()']), ans: '~NumeClasa', hint: 'tilda' };
+                }
+            },
+            {
+                type: 'choice', q: 'cout face parte din:', gen: () => {
+                    return { vars: {}, opts: shuffle(['iostream', 'cstdio', 'cmath', 'vector']), ans: 'iostream', hint: 'std::cout' };
+                }
+            }
+        ]
+    },
+
+    python: {
+        tata: [
+            {
+                type: 'choice', q: 'List comprehension corectă pentru pătrate 0-3:', gen: () => {
+                    return { vars: {}, opts: shuffle(['[x*x for x in range(4)]', '[x*x in range(4)]', '{x*x for x range 4}', 'for x in range(4): x*x']), ans: '[x*x for x in range(4)]', hint: '[expr for x in iterable]' };
+                }
+            },
+            {
+                type: 'choice', q: 'open(path, \"rb\") deschide:', gen: () => {
+                    return { vars: {}, opts: shuffle(['binar, citire', 'text, scriere', 'append', 'utf-8 write']), ans: 'binar, citire', hint: 'r=read, b=bytes' };
+                }
+            },
+            {
+                type: 'choice', q: 'requests.get(url).json() întoarce:', gen: () => {
+                    return { vars: {}, opts: shuffle(['dict/list Python', 'string HTML', 'fișier', 'cod HTTP']), ans: 'dict/list Python', hint: 'parse JSON body' };
+                }
+            },
+            {
+                type: 'choice', q: 'def f(a, b=2): câte argumente poziționale obligatorii?', gen: () => {
+                    return { vars: {}, opts: shuffle(['1', '2', '0', '3']), ans: '1', hint: 'doar a e obligatoriu' };
+                }
+            }
+        ]
+    },
+
+    franceza: {
+        nicoleta: [
+            {
+                type: 'choice', q: '„Bonjour” înseamnă:', gen: () => {
+                    return { vars: {}, opts: shuffle(['Bună ziua', 'Noapte bună', 'Mulțumesc', 'La revedere']), ans: 'Bună ziua', hint: 'salut de zi' };
+                }
+            },
+            {
+                type: 'choice', q: 'Je ___ française. (être)', gen: () => {
+                    return { vars: {}, opts: shuffle(['suis', 'es', 'est', 'sommes']), ans: 'suis', hint: 'je suis' };
+                }
+            },
+            {
+                type: 'choice', q: 'Articol hotărât feminin singular:', gen: () => {
+                    return { vars: {}, opts: shuffle(['la', 'le', 'les', 'un']), ans: 'la', hint: 'la table' };
+                }
+            },
+            {
+                type: 'choice', q: '„avoir” la persoana I plural:', gen: () => {
+                    return { vars: {}, opts: shuffle(['avons', 'avez', 'ont', 'ai']), ans: 'avons', hint: 'nous avons' };
+                }
+            }
+        ]
+    },
+
+    italiana: {
+        nicoleta: [
+            {
+                type: 'choice', q: '„Ciao” poate însemna:', gen: () => {
+                    return { vars: {}, opts: shuffle(['salut și pa', 'doar mulțumesc', 'doar noapte bună', 'scuză-mă']), ans: 'salut și pa', hint: 'informal, ambele sensuri' };
+                }
+            },
+            {
+                type: 'choice', q: 'Io ___ italiana. (essere)', gen: () => {
+                    return { vars: {}, opts: shuffle(['sono', 'sei', 'è', 'siamo']), ans: 'sono', hint: 'io sono' };
+                }
+            },
+            {
+                type: 'choice', q: 'Articol hotărât masculin singular (înainte de consoană):', gen: () => {
+                    return { vars: {}, opts: shuffle(['il', 'lo', 'la', 'i']), ans: 'il', hint: 'il libro' };
+                }
+            },
+            {
+                type: 'choice', q: '„avere” la noi:', gen: () => {
+                    return { vars: {}, opts: shuffle(['abbiamo', 'avete', 'hanno', 'ho']), ans: 'abbiamo', hint: 'noi abbiamo' };
+                }
+            }
+        ]
+    },
+
+    istorie: {
+        nicoleta: [
+            {
+                type: 'choice', q: 'Marea Unire a fost proclamată în:', gen: () => {
+                    return { vars: {}, opts: shuffle(['1918', '1859', '1877', '1947']), ans: '1918', hint: '1 decembrie, Alba Iulia' };
+                }
+            },
+            {
+                type: 'choice', q: 'Unirea Principatelor (Moldova și Țara Românească):', gen: () => {
+                    return { vars: {}, opts: shuffle(['1859', '1918', '1877', '1848']), ans: '1859', hint: 'Cuza' };
+                }
+            },
+            {
+                type: 'choice', q: 'România a intra în Primul Război Mondial în:', gen: () => {
+                    return { vars: {}, opts: shuffle(['1916', '1914', '1918', '1941']), ans: '1916', hint: 'nu în 1914' };
+                }
+            },
+            {
+                type: 'choice', q: 'Regimul comunist în România s-a încheiat în:', gen: () => {
+                    return { vars: {}, opts: shuffle(['1989', '1947', '1965', '1977']), ans: '1989', hint: 'decembrie' };
+                }
+            }
+        ]
+    },
+
+    geografie: {
+        nicoleta: [
+            {
+                type: 'choice', q: 'Cel mai înalt vârf din România:', gen: () => {
+                    return { vars: {}, opts: shuffle(['Moldoveanu', 'Negoiu', 'Omu', 'Peleaga']), ans: 'Moldoveanu', hint: 'Făgăraș, 2544 m' };
+                }
+            },
+            {
+                type: 'choice', q: 'Dunărea se varsă în:', gen: () => {
+                    return { vars: {}, opts: shuffle(['Marea Neagră', 'Marea Mediterană', 'Marea Adriatică', 'Oceanul Atlantic']), ans: 'Marea Neagră', hint: 'Delta Dunării' };
+                }
+            },
+            {
+                type: 'choice', q: 'Carpații se împart în:', gen: () => {
+                    return { vars: {}, opts: shuffle(['Orientali, Meridionali, Occidentali', 'Nordici și Sudici', 'Alpi și Balcani', 'Banat și Dobrogea']), ans: 'Orientali, Meridionali, Occidentali', hint: 'trei grupe' };
+                }
+            },
+            {
+                type: 'choice', q: 'Capitala României este:', gen: () => {
+                    return { vars: {}, opts: shuffle(['București', 'Cluj-Napoca', 'Iași', 'Timișoara']), ans: 'București', hint: 'sudul țării' };
+                }
+            }
         ]
     }
 };
@@ -1098,7 +1426,12 @@ function init() {
     const user = localStorage.getItem('eduquest_profile') || 'rebecca';
 
     document.getElementById('questTitle').textContent = quest.title;
-    const subjectNames = { matematica: 'Matematică', romana: 'Limba Română', engleza: 'Limba Engleză', bonus: 'Bonus' };
+    const subjectNames = {
+        matematica: 'Matematică', romana: 'Limba Română', engleza: 'Limba Engleză',
+        informatica: 'Informatică', autohotkey: 'AutoHotkey', english_grammar: 'English Grammar',
+        cpp: 'C++', python: 'Python', franceza: 'Franceză', italiana: 'Italiană',
+        istorie: 'Istorie', geografie: 'Geografie', bonus: 'Bonus'
+    };
     document.getElementById('questSubject').textContent = subjectNames[quest.subject] || quest.subject;
     document.getElementById('pointsBadge').textContent = `+${quest.points} ⭐`;
 
@@ -1116,14 +1449,22 @@ function generateQuestions(user) {
     const userDifficulty = JSON.parse(localStorage.getItem(difficultyKey) || '{}');
     const subjectDifficulty = userDifficulty[quest.subject] || 'medium';
 
-    // Get appropriate exercises for this user and subject
-    let templates = EXERCISES[quest.subject]?.[user];
+    // Exerciții DOAR pentru profilul curent — fără fallback pe matematica altui profil
+    let templates = (EXERCISES[quest.subject] && EXERCISES[quest.subject][user]) || [];
 
-    // Fallback to appropriate difficulty
-    if (!templates) {
-        templates = user === 'brianna'
-            ? EXERCISES.matematica.brianna
-            : EXERCISES.matematica.rebecca;
+    if (!templates.length) {
+        questions = [{
+            type: 'choice',
+            question: 'Nu există încă exerciții pentru această materie la profilul tău.',
+            options: ['Înțeleg'],
+            answer: 'Înțeleg',
+            hint: 'Alege o misiune din materiile profilului.',
+            done: false,
+            correct: null
+        }];
+        document.getElementById('progressDots').innerHTML = '<div class="dot dot--current" data-i="0"></div>';
+        document.getElementById('totalQ').textContent = '1';
+        return;
     }
 
     // Filter templates based on difficulty level

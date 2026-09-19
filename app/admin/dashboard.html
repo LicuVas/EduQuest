@@ -318,12 +318,7 @@
         <div class="insight-card">
             <h3>💡 Insight AI - Rezumat Săptămânal</h3>
             <p id="aiInsight">
-                <strong>Rebecca</strong> a excelat la matematică (92% acuratețe), iar <strong>Brianna</strong>
-                progresează constant la citit.
-                <strong>Nicoleta</strong> a început bine cu istoria medievală.
-                <strong>Tata</strong> a terminat modulul de AHK basics.
-                <br><br>
-                <em>Recomandare:</em> Încurajați sesiuni scurte zilnice pentru menținerea streak-urilor!
+                Nicio statistică încă. Rezumatul apare după ce există rezultate salvate pe acest dispozitiv.
             </p>
         </div>
 
@@ -438,27 +433,35 @@
             document.getElementById('totalPoints').textContent = totalPoints;
             document.getElementById('totalQuests').textContent = totalQuests;
             document.getElementById('avgStreak').textContent = Math.round(totalStreak / userCount) || 0;
+
+            const insight = document.getElementById('aiInsight');
+            if (totalQuests > 0) {
+                insight.textContent = `Puncte totale: ${totalPoints}. Misiuni complete: ${totalQuests}. Date din acest dispozitiv, nu statistici estimate.`;
+            }
         }
 
-        // Load activity log
+        // Load activity log — doar din localStorage, fără fapte inventate
         function loadActivity() {
-            const activities = [
-                { time: '10:30', icon: '✓', type: 'success', text: 'Rebecca a completat "Tabla înmulțirii"' },
-                { time: '11:15', icon: '✓', type: 'success', text: 'Brianna a completat "Numere 1-20"' },
-                { time: '12:00', icon: '🎯', type: 'info', text: 'Nicoleta a început lecția de Istorie' },
-                { time: '14:30', icon: '🏆', type: 'success', text: 'Tata a câștigat badge-ul "AHK Master"' },
-                { time: '16:00', icon: '📚', type: 'info', text: 'Rebecca a folosit AI Tutor pentru matematică' }
-            ];
-
-            const html = activities.map(a => `
+            const saved = JSON.parse(localStorage.getItem('eduquest_activity') || 'null');
+            const activities = Array.isArray(saved) ? saved : [];
+            const container = document.getElementById('activityContainer');
+            if (!activities.length) {
+                container.innerHTML = `
+                    <div class="activity-item">
+                        <div class="activity-time">—</div>
+                        <div class="activity-icon info">📭</div>
+                        <div class="activity-text">Nicio activitate înregistrată. Datele apar după misiuni rezolvate pe acest dispozitiv.</div>
+                    </div>
+                `;
+                return;
+            }
+            container.innerHTML = activities.map(a => `
                 <div class="activity-item">
-                    <div class="activity-time">${a.time}</div>
-                    <div class="activity-icon ${a.type}">${a.icon}</div>
-                    <div class="activity-text">${a.text}</div>
+                    <div class="activity-time">${a.time || ''}</div>
+                    <div class="activity-icon ${a.type || 'info'}">${a.icon || '✓'}</div>
+                    <div class="activity-text">${a.text || a.title || ''}</div>
                 </div>
             `).join('');
-
-            document.getElementById('activityContainer').innerHTML = html;
         }
 
         // Export data

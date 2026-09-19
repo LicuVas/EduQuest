@@ -1,0 +1,116 @@
+{
+  "clasa": 2,
+  "an_scolar": "2026-2027",
+  "status": "curent",
+  "profil": "brianna",
+  "sursa": "Programa școlară pentru învățământul primar (OMEN 3418/2013, în vigoare)",
+  "discipline": {
+    "matematica_explorarea_mediului": {
+      "denumire": "Matematică și explorarea mediului",
+      "competente_specifice": [
+        "1.1. Scrierea, citirea și formarea numerelor naturale de la 0 la 100",
+        "1.2. Compararea și ordonarea numerelor naturale în concentrul 0-100",
+        "1.3. Efectuarea de adunări și scăderi cu și fără trecere peste ordin, în concentrul 0-100",
+        "1.4. Recunoașterea înmulțirii ca adunare repetată",
+        "2.1. Recunoașterea formelor geometrice plane",
+        "3.1. Rezolvarea de probleme cu 1-2 operații"
+      ],
+      "continut": {
+        "numere_0_100": {
+          "titlu": "Numerele naturale de la 0 la 100",
+          "subteme": [
+            "Citirea și scrierea numerelor",
+            "Formarea numerelor (zeci și unități)",
+            "Compararea și ordonarea",
+            "Vecinii unui număr",
+            "Numere pare și impare"
+          ]
+        },
+        "operatii": {
+          "titlu": "Adunarea și scăderea în concentrul 0-100",
+          "subteme": [
+            "Adunare fără trecere peste ordin",
+            "Adunare cu trecere peste ordin",
+            "Scădere fără împrumut",
+            "Scădere cu împrumut",
+            "Proba operațiilor",
+            "Probleme cu 1-2 operații"
+          ]
+        },
+        "inmultire_intro": {
+          "titlu": "Înmulțirea ca adunare repetată",
+          "subteme": [
+            "Grupuri egale",
+            "Tabla adunării repetate (2, 3, 4, 5)",
+            "Sensul înmulțirii"
+          ]
+        },
+        "geometrie": {
+          "titlu": "Forme geometrice",
+          "subteme": [
+            "Pătrat, dreptunghi, triunghi, cerc",
+            "Latura, vârf, unghi (recunoaștere)",
+            "Poziție în spațiu"
+          ]
+        },
+        "masurari": {
+          "titlu": "Măsurări",
+          "subteme": [
+            "Lungime: centimetru, metru",
+            "Bani: leu, ban",
+            "Timp: ora, ziua, săptămâna",
+            "Calendarul"
+          ]
+        }
+      }
+    },
+    "limba_romana": {
+      "denumire": "Comunicare în limba română",
+      "competente_specifice": [
+        "1.1. Identificarea informațiilor dintr-un mesaj oral scurt",
+        "2.1. Formularea de enunțuri în situații de comunicare uzuală",
+        "3.1. Citirea unor texte scurte cunoscute și noi",
+        "4.1. Scrierea de propoziții și texte scurte"
+      ],
+      "continut": {
+        "citire_scriere": {
+          "titlu": "Citire și scriere",
+          "subteme": [
+            "Citirea cuvintelor și a propozițiilor",
+            "Texte narative scurte",
+            "Scrierea de propoziții",
+            "Despărțirea în silabe"
+          ]
+        },
+        "vocabular": {
+          "titlu": "Vocabular",
+          "subteme": [
+            "Cuvinte cu sens asemănător și opus (introducere)",
+            "Familia de cuvinte (exemple simple)"
+          ]
+        },
+        "gramatica": {
+          "titlu": "Elemente de construcție a comunicării",
+          "subteme": [
+            "Propoziția. Semne de punctuație",
+            "Substantivul (numele)",
+            "Verbul (acțiunea) — recunoaștere"
+          ]
+        }
+      }
+    },
+    "limba_engleza": {
+      "denumire": "Limba engleză",
+      "nivel": "A1 - începători",
+      "teme": [
+        "Salutări și prezentare",
+        "Numere 1-20",
+        "Culori",
+        "Familie",
+        "Animale",
+        "Școală: obiecte din clasă",
+        "Comenzi simple"
+      ]
+    }
+  }
+}

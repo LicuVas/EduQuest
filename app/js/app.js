@@ -5,7 +5,7 @@ const PROFILES = {
     rebecca: {
         name: 'Rebecca',
         nickname: 'Rebi',
-        grade: 3,
+        grade: 4,
         avatarImg: 'images/mascots/Re_Roblox.png',
         avatarEmoji: '🎮',
         gradient: 'var(--gradient-rebecca)',
@@ -15,7 +15,7 @@ const PROFILES = {
     brianna: {
         name: 'Brianna',
         nickname: 'Bri',
-        grade: 1,
+        grade: 2,
         avatarImg: 'images/mascots/Bri_Roblox.png',
         avatarEmoji: '🎮',
         gradient: 'var(--gradient-brianna)',
@@ -57,32 +57,32 @@ const PROFILES = {
 // Sample quests for each profile
 const SAMPLE_QUESTS = {
     rebecca: [
-        { id: 1, subject: 'romana', title: 'Citește o poveste', points: 15, completed: false },
-        { id: 2, subject: 'matematica', title: 'Rezolvă 5 adunări', points: 20, completed: false },
-        { id: 3, subject: 'engleza', title: 'Învață 5 cuvinte noi', points: 15, completed: false },
-        { id: 4, subject: 'matematica', title: 'Tabla înmulțirii cu 3', points: 25, completed: false },
-        { id: 5, subject: 'bonus', title: 'Puzzle logic', points: 30, completed: false }
+        { id: 1, subject: 'romana', title: 'Citește un text scurt', points: 15, completed: false },
+        { id: 2, subject: 'matematica', title: 'Adunări și scăderi până la 1 000 000', points: 20, completed: false },
+        { id: 3, subject: 'engleza', title: 'Învață 8 cuvinte noi', points: 15, completed: false },
+        { id: 4, subject: 'matematica', title: 'Fracții și numere zecimale', points: 25, completed: false },
+        { id: 5, subject: 'informatica', title: 'Fișiere și foldere', points: 20, completed: false }
     ],
     brianna: [
-        { id: 1, subject: 'romana', title: 'Scrie literele A-E', points: 10, completed: false },
-        { id: 2, subject: 'matematica', title: 'Numără până la 20', points: 15, completed: false },
-        { id: 3, subject: 'engleza', title: 'Culorile în engleză', points: 10, completed: false },
-        { id: 4, subject: 'romana', title: 'Colorează cuvintele', points: 15, completed: false },
-        { id: 5, subject: 'bonus', title: 'Desenează un animal', points: 20, completed: false }
+        { id: 1, subject: 'romana', title: 'Citește o propoziție', points: 10, completed: false },
+        { id: 2, subject: 'matematica', title: 'Adunări până la 100', points: 15, completed: false },
+        { id: 3, subject: 'engleza', title: 'Culorile și numerele 1-20', points: 10, completed: false },
+        { id: 4, subject: 'romana', title: 'Scrie 3 propoziții scurte', points: 15, completed: false },
+        { id: 5, subject: 'matematica', title: 'Scăderi cu trecere peste 10', points: 20, completed: false }
     ],
     tata: [
         { id: 1, subject: 'autohotkey', title: 'AHK Script Review', points: 25, completed: false },
         { id: 2, subject: 'english_grammar', title: 'Grammar Practice', points: 20, completed: false },
         { id: 3, subject: 'cpp', title: 'C++ Exercise', points: 30, completed: false },
         { id: 4, subject: 'python', title: 'Python Challenge', points: 25, completed: false },
-        { id: 5, subject: 'bonus', title: 'Code Review', points: 35, completed: false }
+        { id: 5, subject: 'python', title: 'Code Review: script Python', points: 35, completed: false }
     ],
     nicoleta: [
-        { id: 1, subject: 'matematica', title: 'Exerciții de bază', points: 15, completed: false },
-        { id: 2, subject: 'romana', title: 'Lectură și comprehensiune', points: 15, completed: false },
-        { id: 3, subject: 'engleza', title: 'Vocabular esențial', points: 10, completed: false },
-        { id: 4, subject: 'istorie', title: 'Cronologie istorică', points: 20, completed: false },
-        { id: 5, subject: 'geografie', title: 'Harta României', points: 15, completed: false }
+        { id: 1, subject: 'matematica', title: 'Ecuații de gradul I', points: 20, completed: false },
+        { id: 2, subject: 'romana', title: 'Comentariu de text literar', points: 20, completed: false },
+        { id: 3, subject: 'engleza', title: 'Tenses: present, past, future', points: 15, completed: false },
+        { id: 4, subject: 'istorie', title: 'România în secolul XX', points: 20, completed: false },
+        { id: 5, subject: 'geografie', title: 'România: relief și hidrografie', points: 15, completed: false }
     ]
 };
 

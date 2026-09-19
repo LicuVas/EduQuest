@@ -270,8 +270,7 @@
             <div class="insight-icon">💡</div>
             <div class="insight-title">Insight AI</div>
             <div class="insight-text" id="aiInsight">
-                Rebecca arată potențial în matematică - rezolvă problemele de înmulțire cu 23% mai rapid decât media.
-                Brianna preferă activitățile creative și are cel mai bun scor la exercițiile cu imagini.
+                Nicio statistică încă. Insight-ul apare după ce există rezultate salvate pe acest dispozitiv.
             </div>
         </div>
 
@@ -282,20 +281,20 @@
                     <div class="child-avatar child-avatar--rebi">👧</div>
                     <div>
                         <div class="child-name">Rebecca</div>
-                        <div class="child-grade">Clasa a III-a</div>
+                        <div class="child-grade">Clasa a IV-a</div>
                     </div>
                 </div>
                 <div class="child-stats">
                     <div>
-                        <div class="child-stat-value" id="rebiPoints">150</div>
+                        <div class="child-stat-value" id="rebiPoints">0</div>
                         <div class="child-stat-label">Puncte</div>
                     </div>
                     <div>
-                        <div class="child-stat-value" id="rebiQuests">12</div>
+                        <div class="child-stat-value" id="rebiQuests">0</div>
                         <div class="child-stat-label">Misiuni</div>
                     </div>
                     <div>
-                        <div class="child-stat-value" id="rebiStreak">3🔥</div>
+                        <div class="child-stat-value" id="rebiStreak">0</div>
                         <div class="child-stat-label">Streak</div>
                     </div>
                 </div>
@@ -306,20 +305,20 @@
                     <div class="child-avatar child-avatar--bri">👧</div>
                     <div>
                         <div class="child-name">Brianna</div>
-                        <div class="child-grade">Clasa I</div>
+                        <div class="child-grade">Clasa a II-a</div>
                     </div>
                 </div>
                 <div class="child-stats">
                     <div>
-                        <div class="child-stat-value" id="briPoints">80</div>
+                        <div class="child-stat-value" id="briPoints">0</div>
                         <div class="child-stat-label">Puncte</div>
                     </div>
                     <div>
-                        <div class="child-stat-value" id="briQuests">8</div>
+                        <div class="child-stat-value" id="briQuests">0</div>
                         <div class="child-stat-label">Misiuni</div>
                     </div>
                     <div>
-                        <div class="child-stat-value" id="briStreak">2🔥</div>
+                        <div class="child-stat-value" id="briStreak">0</div>
                         <div class="child-stat-label">Streak</div>
                     </div>
                 </div>
@@ -331,28 +330,11 @@
             <h2 class="section-title">📅 Activitate Azi</h2>
             <div class="activity-list" id="activityList">
                 <div class="activity-item">
-                    <div class="activity-icon activity-icon--success">✓</div>
+                    <div class="activity-icon activity-icon--pending">📭</div>
                     <div class="activity-info">
-                        <div class="activity-title">Rebecca - Tabla înmulțirii</div>
-                        <div class="activity-meta">Matematică • 5/5 corecte • 10:30</div>
+                        <div class="activity-title">Nicio activitate înregistrată azi</div>
+                        <div class="activity-meta">Datele apar după ce copiii rezolvă misiuni pe acest dispozitiv.</div>
                     </div>
-                    <span class="activity-badge activity-badge--done">Completat</span>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon activity-icon--success">✓</div>
-                    <div class="activity-info">
-                        <div class="activity-title">Brianna - Numere 1-20</div>
-                        <div class="activity-meta">Matematică • 4/5 corecte • 11:15</div>
-                    </div>
-                    <span class="activity-badge activity-badge--done">Completat</span>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-icon activity-icon--pending">⏳</div>
-                    <div class="activity-info">
-                        <div class="activity-title">Rebecca - Vocabular Engleză</div>
-                        <div class="activity-meta">Engleză • Neterminat</div>
-                    </div>
-                    <span class="activity-badge activity-badge--pending">În așteptare</span>
                 </div>
             </div>
         </div>
@@ -389,16 +371,37 @@
 
     <script>
         function loadStats() {
-            const rebiStats = JSON.parse(localStorage.getItem('eduquest_stats_rebecca') || '{"totalPoints":150,"questsCompleted":12,"streak":3}');
-            const briStats = JSON.parse(localStorage.getItem('eduquest_stats_brianna') || '{"totalPoints":80,"questsCompleted":8,"streak":2}');
+            const empty = { totalPoints: 0, questsCompleted: 0, streak: 0 };
+            const rebiStats = JSON.parse(localStorage.getItem('eduquest_stats_rebecca') || 'null') || empty;
+            const briStats = JSON.parse(localStorage.getItem('eduquest_stats_brianna') || 'null') || empty;
 
-            document.getElementById('rebiPoints').textContent = rebiStats.totalPoints;
-            document.getElementById('rebiQuests').textContent = rebiStats.questsCompleted;
-            document.getElementById('rebiStreak').textContent = rebiStats.streak + '🔥';
+            document.getElementById('rebiPoints').textContent = rebiStats.totalPoints || 0;
+            document.getElementById('rebiQuests').textContent = rebiStats.questsCompleted || 0;
+            document.getElementById('rebiStreak').textContent = (rebiStats.streak || 0) + (rebiStats.streak ? '🔥' : '');
 
-            document.getElementById('briPoints').textContent = briStats.totalPoints;
-            document.getElementById('briQuests').textContent = briStats.questsCompleted;
-            document.getElementById('briStreak').textContent = briStats.streak + '🔥';
+            document.getElementById('briPoints').textContent = briStats.totalPoints || 0;
+            document.getElementById('briQuests').textContent = briStats.questsCompleted || 0;
+            document.getElementById('briStreak').textContent = (briStats.streak || 0) + (briStats.streak ? '🔥' : '');
+
+            const insight = document.getElementById('aiInsight');
+            const hasData = (rebiStats.questsCompleted || 0) + (briStats.questsCompleted || 0) > 0;
+            if (hasData) {
+                insight.textContent = `Rebecca: ${rebiStats.totalPoints || 0} puncte, ${rebiStats.questsCompleted || 0} misiuni. Brianna: ${briStats.totalPoints || 0} puncte, ${briStats.questsCompleted || 0} misiuni. Date din acest dispozitiv.`;
+            }
+
+            const savedActivity = JSON.parse(localStorage.getItem('eduquest_activity') || 'null');
+            const list = document.getElementById('activityList');
+            if (Array.isArray(savedActivity) && savedActivity.length && list) {
+                list.innerHTML = savedActivity.map(a => `
+                    <div class="activity-item">
+                        <div class="activity-icon activity-icon--success">✓</div>
+                        <div class="activity-info">
+                            <div class="activity-title">${a.title || 'Misiune'}</div>
+                            <div class="activity-meta">${a.meta || ''}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
         }
 
         function exportReport() {
