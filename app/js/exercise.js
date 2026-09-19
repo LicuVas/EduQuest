@@ -1570,13 +1570,17 @@ function generateQuestions(user) {
     document.getElementById('progressDots').innerHTML = questions.map((_, i) =>
         `<div class="dot" data-i="${i}"></div>`
     ).join('');
-    document.getElementById('totalQ').textContent = '5';
+    document.getElementById('totalQ').textContent = String(questions.length);
 }
 
 function showQuestion() {
     const q = questions[qIndex];
+    if (!q) {
+        complete();
+        return;
+    }
     document.getElementById('currentQ').textContent = qIndex + 1;
-    document.getElementById('questionNumber').textContent = `Întrebarea ${qIndex + 1} din 5`;
+    document.getElementById('questionNumber').textContent = `Întrebarea ${qIndex + 1} din ${questions.length}`;
     document.getElementById('questionText').innerHTML = q.question;
 
     document.querySelectorAll('.dot').forEach((d, i) => {
@@ -1658,7 +1662,7 @@ function checkAnswer() {
         });
     }
 
-    if (ok) score += Math.floor(quest.points / 5);
+    if (ok) score += Math.floor(quest.points / Math.max(1, questions.length));
     showFeedback(ok, q.hint);
 }
 
@@ -1673,7 +1677,7 @@ function showFeedback(ok, hint) {
         'Răspuns corect!' :
         `Răspunsul corect era: ${questions[qIndex].answer}`;
     document.getElementById('pointsEarned').textContent = ok ?
-        `+${Math.floor(quest.points / 5)} puncte` :
+        `+${Math.floor(quest.points / Math.max(1, questions.length))} puncte` :
         hint || 'Continuă să înveți!';
     ov.classList.add('show');
 }
@@ -1681,15 +1685,17 @@ function showFeedback(ok, hint) {
 function nextQuestion() {
     document.getElementById('feedbackOverlay').classList.remove('show');
     qIndex++;
-    if (qIndex >= 5) complete();
+    if (qIndex >= questions.length) complete();
     else showQuestion();
 }
 
 function skipQuestion() {
-    questions[qIndex].done = true;
-    questions[qIndex].correct = false;
+    if (questions[qIndex]) {
+        questions[qIndex].done = true;
+        questions[qIndex].correct = false;
+    }
     qIndex++;
-    if (qIndex >= 5) complete();
+    if (qIndex >= questions.length) complete();
     else showQuestion();
 }
 
@@ -1715,9 +1721,10 @@ function complete() {
     sendFeedback(user, ok);
 
     const ov = document.getElementById('feedbackOverlay');
-    document.getElementById('feedbackIcon').textContent = ok >= 4 ? '🏆' : ok >= 2 ? '🎯' : '📚';
+    const total = questions.length || 1;
+    document.getElementById('feedbackIcon').textContent = ok >= Math.ceil(total * 0.8) ? '🏆' : ok >= Math.ceil(total * 0.4) ? '🎯' : '📚';
     document.getElementById('feedbackTitle').textContent = 'Misiune Completată!';
-    document.getElementById('feedbackMessage').textContent = `Ai răspuns corect la ${ok} din 5 întrebări`;
+    document.getElementById('feedbackMessage').textContent = `Ai răspuns corect la ${ok} din ${total} întrebări`;
     document.getElementById('pointsEarned').textContent = `+${score} puncte câștigate!`;
     ov.querySelector('.btn').textContent = 'Înapoi la Misiuni';
     ov.querySelector('.btn').onclick = () => location.href = 'quests.html';
@@ -1732,8 +1739,8 @@ function sendFeedback(user, correctCount) {
         quest_id: quest.id,
         quest_title: quest.title,
         correct: correctCount,
-        total: 5,
-        accuracy: (correctCount / 5) * 100,
+        total: questions.length,
+        accuracy: questions.length ? (correctCount / questions.length) * 100 : 0,
         score: score,
         questions: questions.map(q => ({
             question: q.question.replace(/<[^>]*>/g, ''),

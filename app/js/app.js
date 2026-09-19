@@ -149,7 +149,10 @@ function saveStats(userId, stats) {
 function getUserQuests(userId) {
     const savedQuests = localStorage.getItem(`eduquest_quests_${userId}`);
     if (savedQuests) {
-        return JSON.parse(savedQuests);
+        const parsed = JSON.parse(savedQuests);
+        // Fără misiuni bonus până există EXERCISES.bonus (altfel click → ecran gol).
+        const bonusReady = typeof EXERCISES !== 'undefined' && EXERCISES && EXERCISES.bonus;
+        return bonusReady ? parsed : parsed.filter(q => q.subject !== 'bonus');
     }
     // Return default quests (all incomplete)
     return SAMPLE_QUESTS[userId] || [];

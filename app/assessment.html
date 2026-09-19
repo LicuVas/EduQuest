@@ -260,65 +260,180 @@
     </div>
 
     <script>
-        let currentUser = localStorage.getItem('eduquest_profile') || 'rebecca';
+        const urlUser = new URLSearchParams(window.location.search).get('user');
+        let currentUser = urlUser || localStorage.getItem('eduquest_profile') || 'rebecca';
+        if (urlUser) localStorage.setItem('eduquest_profile', currentUser);
         let currentSubject = '';
         let questions = [];
         let currentQuestion = 0;
         let correctAnswers = 0;
         let selectedAnswer = null;
 
-        // Assessment questions by subject - mixed difficulty
+        // 2026-09-19: evaluare PE PROFIL (Tata/Nicoleta fără test de primar;
+        // Brianna fără ×÷ peste programa 0-100; Rebecca păstrează operațiile ei).
         const assessmentQuestions = {
-            matematica: [
-                // Easy (3)
-                { q: '5 + 3 = ?', opts: ['8', '7', '9', '6'], ans: '8', level: 'easy' },
-                { q: '10 - 4 = ?', opts: ['6', '5', '7', '4'], ans: '6', level: 'easy' },
-                { q: 'Ce urmează? 2, 4, 6, ?', opts: ['8', '7', '9', '10'], ans: '8', level: 'easy' },
-                // Medium (4)
-                { q: '23 + 45 = ?', opts: ['68', '67', '69', '58'], ans: '68', level: 'medium' },
-                { q: '5 × 7 = ?', opts: ['35', '30', '40', '25'], ans: '35', level: 'medium' },
-                { q: '81 - 29 = ?', opts: ['52', '62', '42', '51'], ans: '52', level: 'medium' },
-                { q: '24 ÷ 6 = ?', opts: ['4', '5', '3', '6'], ans: '4', level: 'medium' },
-                // Hard (3)
-                { q: '125 + 287 = ?', opts: ['412', '402', '422', '312'], ans: '412', level: 'hard' },
-                { q: '12 × 8 = ?', opts: ['96', '86', '106', '84'], ans: '96', level: 'hard' },
-                { q: '156 ÷ 12 = ?', opts: ['13', '12', '14', '11'], ans: '13', level: 'hard' }
-            ],
-            romana: [
-                // Easy
-                { q: 'Ce literă începe cuvântul "MAMA"?', opts: ['M', 'A', 'N', 'T'], ans: 'M', level: 'easy' },
-                { q: 'Câte silabe are "CA-SĂ"?', opts: ['2', '1', '3', '4'], ans: '2', level: 'easy' },
-                { q: 'Care e vocală?', opts: ['A', 'B', 'C', 'D'], ans: 'A', level: 'easy' },
-                // Medium
-                { q: '"Pisică" este:', opts: ['substantiv', 'verb', 'adjectiv', 'pronume'], ans: 'substantiv', level: 'medium' },
-                { q: 'Pluralul de la "carte":', opts: ['cărți', 'carți', 'cartele', 'carturi'], ans: 'cărți', level: 'medium' },
-                { q: 'Opusul lui "mare":', opts: ['mic', 'lat', 'lung', 'gros'], ans: 'mic', level: 'medium' },
-                { q: '"Aleargă" este:', opts: ['verb', 'substantiv', 'adjectiv', 'adverb'], ans: 'verb', level: 'medium' },
-                // Hard
-                { q: 'Forma corectă: "Copilul ___ la școală"', opts: ['merge', 'merg', 'mergi', 'mergeți'], ans: 'merge', level: 'hard' },
-                { q: 'Diminutivul de la "pisică":', opts: ['pisicuță', 'pisici', 'pisoi', 'pisoiaș'], ans: 'pisicuță', level: 'hard' },
-                { q: 'Ce timp e "Am mâncat"?', opts: ['trecut', 'prezent', 'viitor', 'infinitiv'], ans: 'trecut', level: 'hard' }
-            ],
-            engleza: [
-                // Easy
-                { q: 'RED = ?', opts: ['roșu', 'albastru', 'verde', 'galben'], ans: 'roșu', level: 'easy' },
-                { q: 'CAT = ?', opts: ['pisică', 'câine', 'iepure', 'pește'], ans: 'pisică', level: 'easy' },
-                { q: 'ONE = ?', opts: ['1', '2', '3', '4'], ans: '1', level: 'easy' },
-                // Medium
-                { q: '"Apple" înseamnă:', opts: ['măr', 'portocală', 'banană', 'strugure'], ans: 'măr', level: 'medium' },
-                { q: '"Happy" înseamnă:', opts: ['fericit', 'trist', 'supărat', 'obosit'], ans: 'fericit', level: 'medium' },
-                { q: 'Pluralul de la "cat":', opts: ['cats', 'cates', 'caties', 'cat'], ans: 'cats', level: 'medium' },
-                { q: '"I read" = ?', opts: ['Eu citesc', 'Eu scriu', 'Eu mănânc', 'Eu dorm'], ans: 'Eu citesc', level: 'medium' },
-                // Hard
-                { q: '___ apple (articol)', opts: ['an', 'a', 'the', 'some'], ans: 'an', level: 'hard' },
-                { q: '"Where do you live?" = ?', opts: ['Unde locuiești?', 'Cum te cheamă?', 'Câți ani ai?', 'Ce faci?'], ans: 'Unde locuiești?', level: 'hard' },
-                { q: '"The cat is ON the table" = pisica e:', opts: ['pe masă', 'sub masă', 'lângă masă', 'în masă'], ans: 'pe masă', level: 'hard' }
-            ]
+            rebecca: {
+                matematica: [
+                    { q: '5 + 3 = ?', opts: ['8', '7', '9', '6'], ans: '8', level: 'easy' },
+                    { q: '10 - 4 = ?', opts: ['6', '5', '7', '4'], ans: '6', level: 'easy' },
+                    { q: 'Ce urmează? 2, 4, 6, ?', opts: ['8', '7', '9', '10'], ans: '8', level: 'easy' },
+                    { q: '23 + 45 = ?', opts: ['68', '67', '69', '58'], ans: '68', level: 'medium' },
+                    { q: '5 × 7 = ?', opts: ['35', '30', '40', '25'], ans: '35', level: 'medium' },
+                    { q: '81 - 29 = ?', opts: ['52', '62', '42', '51'], ans: '52', level: 'medium' },
+                    { q: '24 ÷ 6 = ?', opts: ['4', '5', '3', '6'], ans: '4', level: 'medium' },
+                    { q: '125 + 287 = ?', opts: ['412', '402', '422', '312'], ans: '412', level: 'hard' },
+                    { q: '12 × 8 = ?', opts: ['96', '86', '106', '84'], ans: '96', level: 'hard' },
+                    { q: '156 ÷ 12 = ?', opts: ['13', '12', '14', '11'], ans: '13', level: 'hard' }
+                ],
+                romana: [
+                    { q: 'Ce literă începe cuvântul "MAMA"?', opts: ['M', 'A', 'N', 'T'], ans: 'M', level: 'easy' },
+                    { q: 'Câte silabe are "CA-SĂ"?', opts: ['2', '1', '3', '4'], ans: '2', level: 'easy' },
+                    { q: 'Care e vocală?', opts: ['A', 'B', 'C', 'D'], ans: 'A', level: 'easy' },
+                    { q: '"Pisică" este:', opts: ['substantiv', 'verb', 'adjectiv', 'pronume'], ans: 'substantiv', level: 'medium' },
+                    { q: 'Pluralul de la "carte":', opts: ['cărți', 'carți', 'cartele', 'carturi'], ans: 'cărți', level: 'medium' },
+                    { q: 'Opusul lui "mare":', opts: ['mic', 'lat', 'lung', 'gros'], ans: 'mic', level: 'medium' },
+                    { q: '"Aleargă" este:', opts: ['verb', 'substantiv', 'adjectiv', 'adverb'], ans: 'verb', level: 'medium' },
+                    { q: 'Forma corectă: "Copilul ___ la școală"', opts: ['merge', 'merg', 'mergi', 'mergeți'], ans: 'merge', level: 'hard' },
+                    { q: 'Diminutivul de la "pisică":', opts: ['pisicuță', 'pisici', 'pisoi', 'pisoiaș'], ans: 'pisicuță', level: 'hard' },
+                    { q: 'Ce timp e "Am mâncat"?', opts: ['trecut', 'prezent', 'viitor', 'infinitiv'], ans: 'trecut', level: 'hard' }
+                ],
+                engleza: [
+                    { q: 'RED = ?', opts: ['roșu', 'albastru', 'verde', 'galben'], ans: 'roșu', level: 'easy' },
+                    { q: 'CAT = ?', opts: ['pisică', 'câine', 'iepure', 'pește'], ans: 'pisică', level: 'easy' },
+                    { q: 'ONE = ?', opts: ['1', '2', '3', '4'], ans: '1', level: 'easy' },
+                    { q: '"Apple" înseamnă:', opts: ['măr', 'portocală', 'banană', 'strugure'], ans: 'măr', level: 'medium' },
+                    { q: '"Happy" înseamnă:', opts: ['fericit', 'trist', 'supărat', 'obosit'], ans: 'fericit', level: 'medium' },
+                    { q: 'Pluralul de la "cat":', opts: ['cats', 'cates', 'caties', 'cat'], ans: 'cats', level: 'medium' },
+                    { q: '"I read" = ?', opts: ['Eu citesc', 'Eu scriu', 'Eu mănânc', 'Eu dorm'], ans: 'Eu citesc', level: 'medium' },
+                    { q: '___ apple (articol)', opts: ['an', 'a', 'the', 'some'], ans: 'an', level: 'hard' },
+                    { q: '"Where do you live?" = ?', opts: ['Unde locuiești?', 'Cum te cheamă?', 'Câți ani ai?', 'Ce faci?'], ans: 'Unde locuiești?', level: 'hard' },
+                    { q: '"The cat is ON the table" = pisica e:', opts: ['pe masă', 'sub masă', 'lângă masă', 'în masă'], ans: 'pe masă', level: 'hard' }
+                ]
+            },
+            brianna: {
+                matematica: [
+                    { q: '5 + 3 = ?', opts: ['8', '7', '9', '6'], ans: '8', level: 'easy' },
+                    { q: '10 - 4 = ?', opts: ['6', '5', '7', '4'], ans: '6', level: 'easy' },
+                    { q: 'Ce urmează? 2, 4, 6, ?', opts: ['8', '7', '9', '10'], ans: '8', level: 'easy' },
+                    { q: '23 + 45 = ?', opts: ['68', '67', '69', '58'], ans: '68', level: 'medium' },
+                    { q: '47 + 18 = ?', opts: ['65', '55', '64', '75'], ans: '65', level: 'medium' },
+                    { q: '81 - 29 = ?', opts: ['52', '62', '42', '51'], ans: '52', level: 'medium' },
+                    { q: '60 - 25 = ?', opts: ['35', '45', '34', '25'], ans: '35', level: 'medium' },
+                    { q: 'Care e mai mare: 45 sau 54?', opts: ['54', '45', 'egale', '40'], ans: '54', level: 'hard' },
+                    { q: '38 + 27 = ?', opts: ['65', '55', '64', '75'], ans: '65', level: 'hard' },
+                    { q: '100 - 37 = ?', opts: ['63', '73', '53', '67'], ans: '63', level: 'hard' }
+                ],
+                romana: [
+                    { q: 'Ce literă începe cuvântul "MAMA"?', opts: ['M', 'A', 'N', 'T'], ans: 'M', level: 'easy' },
+                    { q: 'Câte silabe are "CA-SĂ"?', opts: ['2', '1', '3', '4'], ans: '2', level: 'easy' },
+                    { q: 'Care e vocală?', opts: ['A', 'B', 'C', 'D'], ans: 'A', level: 'easy' },
+                    { q: 'Cu ce literă începe "masă"?', opts: ['M', 'N', 'S', 'A'], ans: 'M', level: 'medium' },
+                    { q: 'Câte cuvinte: "Eu am o pisică"?', opts: ['4', '3', '5', '2'], ans: '4', level: 'medium' },
+                    { q: 'Opusul lui "mare":', opts: ['mic', 'lat', 'lung', 'gros'], ans: 'mic', level: 'medium' },
+                    { q: 'Propoziția are:', opts: ['subiect și predicat', 'doar litere', 'doar numere', 'doar puncte'], ans: 'subiect și predicat', level: 'medium' },
+                    { q: 'Care e o propoziție?', opts: ['Ana citește.', 'Ana', 'citește', 'cartea'], ans: 'Ana citește.', level: 'hard' },
+                    { q: 'Punctul stă:', opts: ['la sfârșitul propoziției', 'la început', 'în mijlocul cuvântului', 'niciodată'], ans: 'la sfârșitul propoziției', level: 'hard' },
+                    { q: 'Câte silabe are "FE-RE-A-STRĂ"?', opts: ['4', '3', '2', '5'], ans: '4', level: 'hard' }
+                ],
+                engleza: [
+                    { q: 'RED = ?', opts: ['roșu', 'albastru', 'verde', 'galben'], ans: 'roșu', level: 'easy' },
+                    { q: 'CAT = ?', opts: ['pisică', 'câine', 'iepure', 'pește'], ans: 'pisică', level: 'easy' },
+                    { q: 'ONE = ?', opts: ['1', '2', '3', '4'], ans: '1', level: 'easy' },
+                    { q: 'BLUE = ?', opts: ['albastru', 'roșu', 'verde', 'negru'], ans: 'albastru', level: 'medium' },
+                    { q: 'DOG = ?', opts: ['câine', 'pisică', 'pasăre', 'pește'], ans: 'câine', level: 'medium' },
+                    { q: 'Numbers: TWO = ?', opts: ['2', '1', '3', '12'], ans: '2', level: 'medium' },
+                    { q: 'Hello înseamnă:', opts: ['salut', 'pa', 'mulțumesc', 'da'], ans: 'salut', level: 'medium' },
+                    { q: 'MOM = ?', opts: ['mama', 'tata', 'sora', 'fratele'], ans: 'mama', level: 'hard' },
+                    { q: 'TEN = ?', opts: ['10', '2', '20', '1'], ans: '10', level: 'hard' },
+                    { q: 'Goodbye înseamnă:', opts: ['la revedere', 'salut', 'mulțumesc', 'te rog'], ans: 'la revedere', level: 'hard' }
+                ]
+            },
+            tata: {
+                matematica: [
+                    { q: '15% din 80 = ?', opts: ['12', '15', '8', '20'], ans: '12', level: 'easy' },
+                    { q: '(8 + 2) × 3 = ?', opts: ['30', '14', '24', '11'], ans: '30', level: 'easy' },
+                    { q: '2⁵ = ?', opts: ['32', '10', '25', '16'], ans: '32', level: 'easy' },
+                    { q: '3x + 5 = 20. x = ?', opts: ['5', '15', '8', '3'], ans: '5', level: 'medium' },
+                    { q: 'f(x) = 2x + 3. f(4) = ?', opts: ['11', '8', '10', '14'], ans: '11', level: 'medium' },
+                    { q: 'Media aritmetică a 4, 8, 12 = ?', opts: ['8', '6', '12', '24'], ans: '8', level: 'medium' },
+                    { q: 'Restul lui 17 ÷ 5 = ?', opts: ['2', '3', '1', '4'], ans: '2', level: 'medium' },
+                    { q: 'Dacă a = 3 și b = 4, a² + b² = ?', opts: ['25', '7', '49', '12'], ans: '25', level: 'hard' },
+                    { q: 'log₁₀ 100 = ?', opts: ['2', '10', '1', '100'], ans: '2', level: 'hard' },
+                    { q: 'Derivata lui x² este:', opts: ['2x', 'x', 'x²', '2'], ans: '2x', level: 'hard' }
+                ],
+                romana: [
+                    { q: '"Deși" este:', opts: ['conjuncție', 'prepoziție', 'adverb', 'pronume'], ans: 'conjuncție', level: 'easy' },
+                    { q: 'Forma corectă:', opts: ['să fie', 'să fi', 'sa fie', 'să-fi'], ans: 'să fie', level: 'easy' },
+                    { q: '"Întrucât" introduce:', opts: ['o cauză', 'un loc', 'un timp', 'un nume'], ans: 'o cauză', level: 'easy' },
+                    { q: '"Ion" de Rebreanu este:', opts: ['roman realist', 'nuvelă fantastică', 'poezie lirică', 'basm cult'], ans: 'roman realist', level: 'medium' },
+                    { q: 'Acordul corect:', opts: ['cele două fenomene', 'cei două fenomene', 'cele doi fenomene', 'cei doi fenomen'], ans: 'cele două fenomene', level: 'medium' },
+                    { q: 'Gerunziul de la "a face":', opts: ['făcând', 'făcut', 'face', 'să facă'], ans: 'făcând', level: 'medium' },
+                    { q: 'Complementul direct răspunde la:', opts: ['pe cine? ce?', 'unde?', 'când?', 'cum?'], ans: 'pe cine? ce?', level: 'medium' },
+                    { q: 'Figura de stil în "ochii mării":', opts: ['metaforă', 'enumerație', 'repetiție', 'invocație'], ans: 'metaforă', level: 'hard' },
+                    { q: 'Perfectul simplu e specific:', opts: ['narativului literar', 'instrucțiunilor', 'rețetelor', 'titlurilor'], ans: 'narativului literar', level: 'hard' },
+                    { q: 'Ortografie corectă:', opts: ['niciun', 'nici un', 'nici-un', 'niciunul de'], ans: 'niciun', level: 'hard' }
+                ],
+                engleza: [
+                    { q: '"I have been working" is:', opts: ['present perfect continuous', 'past simple', 'past perfect', 'future perfect'], ans: 'present perfect continuous', level: 'easy' },
+                    { q: 'If I ___ you, I would wait.', opts: ['were', 'was', 'am', 'be'], ans: 'were', level: 'easy' },
+                    { q: 'Which is a phrasal verb?', opts: ['give up', 'quickly run', 'very tired', 'the book'], ans: 'give up', level: 'easy' },
+                    { q: 'He said, "I am tired." → He said he ___ tired.', opts: ['was', 'is', 'were', 'been'], ans: 'was', level: 'medium' },
+                    { q: 'Neither of them ___ ready.', opts: ['is', 'are', 'be', 'were'], ans: 'is', level: 'medium' },
+                    { q: 'I wish I ___ more time.', opts: ['had', 'have', 'has', 'having'], ans: 'had', level: 'medium' },
+                    { q: '"Despite" is closest to:', opts: ['in spite of', 'because of', 'instead of', 'on behalf of'], ans: 'in spite of', level: 'medium' },
+                    { q: 'The report ___ by Friday.', opts: ['will have been finished', 'will finish', 'finishes', 'finished'], ans: 'will have been finished', level: 'hard' },
+                    { q: 'Hardly ___ the train left when it started to rain.', opts: ['had', 'has', 'did', 'was'], ans: 'had', level: 'hard' },
+                    { q: 'A dangling modifier is a problem of:', opts: ['unclear subject of a phrase', 'wrong tense', 'missing article', 'spelling'], ans: 'unclear subject of a phrase', level: 'hard' }
+                ]
+            },
+            nicoleta: {
+                matematica: [
+                    { q: '2x + 4 = 10. x = ?', opts: ['3', '2', '6', '8'], ans: '3', level: 'easy' },
+                    { q: '10% din 50 = ?', opts: ['5', '10', '15', '45'], ans: '5', level: 'easy' },
+                    { q: 'Aria dreptunghiului 8 × 5 = ?', opts: ['40', '26', '13', '45'], ans: '40', level: 'easy' },
+                    { q: '5x − 3 = 12. x = ?', opts: ['3', '5', '15', '9'], ans: '3', level: 'medium' },
+                    { q: 'f(x) = 2x + 3. f(4) = ?', opts: ['11', '8', '10', '14'], ans: '11', level: 'medium' },
+                    { q: '25% din 80 = ?', opts: ['20', '25', '16', '40'], ans: '20', level: 'medium' },
+                    { q: 'Sistem: x+y=10, x−y=2. x = ?', opts: ['6', '4', '8', '5'], ans: '6', level: 'medium' },
+                    { q: 'Perimetrul pătratului cu latura 7 = ?', opts: ['28', '49', '14', '21'], ans: '28', level: 'hard' },
+                    { q: '3x + 5 = 2x + 11. x = ?', opts: ['6', '5', '16', '3'], ans: '6', level: 'hard' },
+                    { q: 'Dobândă: 200 lei × 5% = ?', opts: ['10', '5', '20', '15'], ans: '10', level: 'hard' }
+                ],
+                romana: [
+                    { q: '"Aleargă" este:', opts: ['verb', 'substantiv', 'adjectiv', 'adverb'], ans: 'verb', level: 'easy' },
+                    { q: '"Pisică" este:', opts: ['substantiv', 'verb', 'adjectiv', 'pronume'], ans: 'substantiv', level: 'easy' },
+                    { q: 'Pluralul de la "carte":', opts: ['cărți', 'carți', 'cartele', 'carturi'], ans: 'cărți', level: 'easy' },
+                    { q: 'Gradele de comparație țin de:', opts: ['adjectiv', 'substantiv', 'prepoziție', 'conjuncție'], ans: 'adjectiv', level: 'medium' },
+                    { q: '"Ion" de Rebreanu este:', opts: ['roman realist', 'nuvelă fantastică', 'poezie lirică', 'basm cult'], ans: 'roman realist', level: 'medium' },
+                    { q: 'Forma corectă: "Copilul ___ la școală"', opts: ['merge', 'merg', 'mergi', 'mergeți'], ans: 'merge', level: 'medium' },
+                    { q: 'Ce timp e "Am mâncat"?', opts: ['trecut', 'prezent', 'viitor', 'infinitiv'], ans: 'trecut', level: 'medium' },
+                    { q: 'Tema unei opere este:', opts: ['ideea centrală', 'numele autorului', 'anul apariției', 'numărul paginilor'], ans: 'ideea centrală', level: 'hard' },
+                    { q: 'Un comentariu de text cere:', opts: ['idee, argumente, citate', 'doar rezumat', 'doar biografie', 'doar titlu'], ans: 'idee, argumente, citate', level: 'hard' },
+                    { q: 'Ortografie corectă:', opts: ['să fie', 'să fi', 'sa fie', 'să-fi'], ans: 'să fie', level: 'hard' }
+                ],
+                engleza: [
+                    { q: 'I work, she ___', opts: ['works', 'work', 'working', 'worked'], ans: 'works', level: 'easy' },
+                    { q: '"Apple" înseamnă:', opts: ['măr', 'portocală', 'banană', 'strugure'], ans: 'măr', level: 'easy' },
+                    { q: 'Past of "go":', opts: ['went', 'goed', 'gone', 'going'], ans: 'went', level: 'easy' },
+                    { q: '"I read" = ?', opts: ['Eu citesc', 'Eu scriu', 'Eu mănânc', 'Eu dorm'], ans: 'Eu citesc', level: 'medium' },
+                    { q: 'Yesterday I ___ to school.', opts: ['went', 'go', 'goes', 'going'], ans: 'went', level: 'medium' },
+                    { q: 'Plural of "child":', opts: ['children', 'childs', 'childes', 'child'], ans: 'children', level: 'medium' },
+                    { q: '"Where do you live?" = ?', opts: ['Unde locuiești?', 'Cum te cheamă?', 'Câți ani ai?', 'Ce faci?'], ans: 'Unde locuiești?', level: 'medium' },
+                    { q: 'Tomorrow I ___ study.', opts: ['will', 'did', 'was', 'been'], ans: 'will', level: 'hard' },
+                    { q: '___ apple (articol)', opts: ['an', 'a', 'the', 'some'], ans: 'an', level: 'hard' },
+                    { q: 'She has lived here ___ 2019.', opts: ['since', 'for', 'ago', 'during'], ans: 'since', level: 'hard' }
+                ]
+            }
         };
 
         function startAssessment(subject) {
             currentSubject = subject;
-            questions = assessmentQuestions[subject];
+            const bank = assessmentQuestions[currentUser] || assessmentQuestions.rebecca;
+            questions = (bank && bank[subject]) || [];
+            if (!questions.length) {
+                alert('Nu există evaluare pentru această materie la profilul tău.');
+                return;
+            }
             currentQuestion = 0;
             correctAnswers = 0;
 

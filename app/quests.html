@@ -244,6 +244,8 @@
                     { title: 'Extensii de fișiere', description: '.docx, .jpg, .mp3', points: 20, difficulty: 'medium', duration: 8 },
                     { title: 'Siguranță pe internet', description: 'Nu trimite parola', points: 20, difficulty: 'easy', duration: 7 }
                 ],
+                // DEPĂȘIT 2026-09-19: șabloane bonus păstrate, dar NU se generează
+                // în lista zilnică până există EXERCISES.bonus (altfel click → ecran gol + crash).
                 bonus: [
                     { title: 'Puzzle logic', description: 'Rezolvă un puzzle', points: 30, difficulty: 'medium', duration: 10 },
                     { title: 'Quiz știință', description: 'Întrebări despre natură', points: 25, difficulty: 'easy', duration: 7 },
@@ -273,6 +275,7 @@
                     { title: 'Hello & Goodbye', description: 'Saluturi în engleză', points: 10, difficulty: 'easy', duration: 3 },
                     { title: 'Family words', description: 'Mom, dad, sister, brother', points: 15, difficulty: 'medium', duration: 7 }
                 ],
+                // DEPĂȘIT 2026-09-19: nu se generează până există EXERCISES.bonus
                 bonus: [
                     { title: 'Desenează casa', description: 'Folosește forme', points: 20, difficulty: 'easy', duration: 10 },
                     { title: 'Puzzle simplu', description: '9 piese', points: 15, difficulty: 'easy', duration: 7 },
@@ -444,8 +447,11 @@
             const quests = [];
             let id = 1;
 
-            // Generate 1-2 quests per subject
+            // Generate 1-2 quests per subject.
+            // Bonus: scos din lista zilnică până există EXERCISES.bonus (exercise.js).
+            const bonusReady = typeof EXERCISES !== 'undefined' && EXERCISES && EXERCISES.bonus;
             Object.keys(templates).forEach(subject => {
+                if (subject === 'bonus' && !bonusReady) return;
                 const subjectQuests = templates[subject];
                 const count = subject === 'bonus' ? 1 : 2;
 
@@ -476,9 +482,13 @@
             if (savedDate === today) {
                 const saved = localStorage.getItem(questsStorageKey(userId));
                 if (saved) {
-                    currentQuests = JSON.parse(saved);
-                    renderQuests();
-                    return;
+                    const bonusReady = typeof EXERCISES !== 'undefined' && EXERCISES && EXERCISES.bonus;
+                    currentQuests = JSON.parse(saved).filter(q => bonusReady || q.subject !== 'bonus');
+                    if (currentQuests.length) {
+                        localStorage.setItem(questsStorageKey(userId), JSON.stringify(currentQuests));
+                        renderQuests();
+                        return;
+                    }
                 }
             }
 
