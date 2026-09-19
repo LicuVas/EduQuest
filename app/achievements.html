@@ -212,23 +212,23 @@
                 <div class="level-info">
                     <div id="levelName">Nivel: Explorator</div>
                     <div class="xp-bar">
-                        <div class="xp-fill" id="xpFill" style="width: 45%"></div>
+                        <div class="xp-fill" id="xpFill" style="width: 0%"></div>
                     </div>
-                    <div style="font-size:0.8rem;margin-top:4px" id="xpText">45/100 XP</div>
+                    <div style="font-size:0.8rem;margin-top:4px" id="xpText">0/100 XP</div>
                 </div>
             </div>
 
             <div class="stats-grid">
                 <div class="stat-item">
-                    <div class="stat-value" id="totalPoints">150</div>
+                    <div class="stat-value" id="totalPoints">0</div>
                     <div class="stat-label">Puncte</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value" id="questsCount">12</div>
+                    <div class="stat-value" id="questsCount">0</div>
                     <div class="stat-label">Misiuni</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value" id="streakCount">3🔥</div>
+                    <div class="stat-value" id="streakCount">0</div>
                     <div class="stat-label">Streak</div>
                 </div>
             </div>
@@ -237,7 +237,7 @@
         <main class="main-content">
             <div class="section-header">
                 <h2>🏅 Badge-uri Câștigate</h2>
-                <span id="badgeCount">3/12</span>
+                <span id="badgeCount">0/12</span>
             </div>
             <div class="badge-grid" id="badgeGrid">
                 <!-- Badges will be rendered here -->
@@ -284,9 +284,11 @@
             { name: 'Maestru', xp: 1000, icon: '🌟' }
         ];
 
+        const EMPTY_STATS = { totalPoints: 0, questsCompleted: 0, streak: 0 };
+
         function init() {
             const userId = localStorage.getItem('eduquest_profile') || 'rebecca';
-            const stats = JSON.parse(localStorage.getItem(`eduquest_stats_${userId}`) || '{"totalPoints":150,"questsCompleted":12,"streak":3}');
+            const stats = JSON.parse(localStorage.getItem(`eduquest_stats_${userId}`) || 'null') || EMPTY_STATS;
 
             // Update stats display
             document.getElementById('totalPoints').textContent = stats.totalPoints;
@@ -337,8 +339,8 @@
         }
 
         function renderLeaderboard() {
-            const rebiStats = JSON.parse(localStorage.getItem('eduquest_stats_rebecca') || '{"totalPoints":150}');
-            const briStats = JSON.parse(localStorage.getItem('eduquest_stats_brianna') || '{"totalPoints":80}');
+            const rebiStats = JSON.parse(localStorage.getItem('eduquest_stats_rebecca') || 'null') || EMPTY_STATS;
+            const briStats = JSON.parse(localStorage.getItem('eduquest_stats_brianna') || 'null') || EMPTY_STATS;
 
             const players = [
                 { name: 'Rebecca', avatar: '👧', xp: rebiStats.totalPoints, gradient: 'var(--gradient-rebecca)' },
