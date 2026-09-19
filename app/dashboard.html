@@ -255,7 +255,7 @@
                     <div class="greeting" id="greeting">Bună, Rebi! 🌟</div>
                     <div class="level-name" id="levelName">Nivel: Explorator 🌱</div>
                     <div class="xp-bar">
-                        <div class="xp-fill" id="xpFill" style="width: 45%"></div>
+                        <div class="xp-fill" id="xpFill" style="width: 0%"></div>
                     </div>
                     <a href="index.html" class="switch-profile" id="switchProfile">👥 Schimbă profilul</a>
                 </div>
@@ -263,16 +263,16 @@
 
             <div class="streak-badge">
                 <span class="fire">🔥</span>
-                <span id="streakCount">3 zile</span>
+                <span id="streakCount">0 zile</span>
             </div>
 
             <div class="today-progress">
                 <div class="progress-title">
                     <span>Progres Azi</span>
-                    <span id="todayProgress">2/5 misiuni</span>
+                    <span id="todayProgress">0/0 misiuni</span>
                 </div>
                 <div class="progress-bar">
-                    <div class="progress-bar__fill" id="progressFill" style="width: 40%"></div>
+                    <div class="progress-bar__fill" id="progressFill" style="width: 0%"></div>
                 </div>
             </div>
         </header>
@@ -327,13 +327,13 @@
             <div class="reward-preview mt-xl">
                 <div class="reward-header">
                     <h3>🎁 Următoarea Recompensă</h3>
-                    <span id="pointsToReward">+50 puncte</span>
+                    <span id="pointsToReward">0 XP</span>
                 </div>
                 <div class="next-reward">
-                    <div class="reward-icon">🏅</div>
+                    <div class="reward-icon" id="rewardIcon">🎯</div>
                     <div class="reward-info">
-                        <h4>Badge "Matematician Curajos"</h4>
-                        <p>Completează 5 exerciții de matematică</p>
+                        <h4 id="rewardTitle">Prima misiune</h4>
+                        <p id="rewardDesc">Completează prima misiune ca să vezi progresul real</p>
                     </div>
                 </div>
             </div>
@@ -379,6 +379,7 @@
 
             // Update header
             document.getElementById('greeting').textContent = `Bună, ${profile.nickname}! 🌟`;
+            renderProfileStats(userId, profile);
 
             // Show image for kids, emoji for adults
             if (profile.avatarImg) {
@@ -400,6 +401,66 @@
 
             // Store current user
             localStorage.setItem('eduquest_profile', userId);
+        }
+
+        const SUBJECT_BADGE = {
+            matematica: { icon: '🔢', name: 'Matematician Curajos', desc: 'Completează 5 exerciții de matematică' },
+            romana: { icon: '📚', name: 'Cititor', desc: 'Completează 5 misiuni de română' },
+            engleza: { icon: '🇬🇧', name: 'English Star', desc: 'Completează 5 misiuni de engleză' },
+            informatica: { icon: '💻', name: 'Informatician', desc: 'Completează 5 misiuni de informatică' },
+            autohotkey: { icon: '⌨️', name: 'Automatizator AHK', desc: 'Completează 5 scripturi AutoHotkey' },
+            english_grammar: { icon: '📖', name: 'Grammar Master', desc: 'Completează 5 exerciții de gramatică engleză' },
+            cpp: { icon: '🔧', name: 'C++ Builder', desc: 'Completează 5 exerciții C++' },
+            python: { icon: '🐍', name: 'Pythonista', desc: 'Completează 5 exerciții Python' },
+            franceza: { icon: '🇫🇷', name: 'Francofon', desc: 'Completează 5 misiuni de franceză' },
+            italiana: { icon: '🇮🇹', name: 'Italiano', desc: 'Completează 5 misiuni de italiană' },
+            istorie: { icon: '🏛️', name: 'Istoric', desc: 'Completează 5 misiuni de istorie' },
+            geografie: { icon: '🗺️', name: 'Geograf', desc: 'Completează 5 misiuni de geografie' }
+        };
+
+        function renderProfileStats(userId, profile) {
+            const stats = (typeof getStats === 'function')
+                ? getStats(userId)
+                : { totalPoints: 0, questsCompleted: 0, streak: 0 };
+            const points = stats.totalPoints || 0;
+            const streak = stats.streak || 0;
+            const level = (typeof getLevel === 'function') ? getLevel(points) : { name: 'Explorator', icon: '🌱', xp: 0 };
+            const progress = (typeof getLevelProgress === 'function') ? getLevelProgress(points) : 0;
+
+            document.getElementById('streakCount').textContent = `${streak} zile`;
+            document.getElementById('xpFill').style.width = `${progress}%`;
+            document.getElementById('levelName').textContent = `Nivel: ${level.name} ${level.icon || ''}`.trim();
+
+            const reward = nextRewardFor(profile, stats, level, points);
+            document.getElementById('pointsToReward').textContent = reward.pointsLabel;
+            document.getElementById('rewardIcon').textContent = reward.icon;
+            document.getElementById('rewardTitle').textContent = reward.title;
+            document.getElementById('rewardDesc').textContent = reward.desc;
+        }
+
+        function nextRewardFor(profile, stats, level, points) {
+            const subjects = (profile && profile.subjects) || [];
+            const completed = stats.questsCompleted || 0;
+            const currentIndex = (typeof LEVELS !== 'undefined') ? LEVELS.findIndex(l => l.name === level.name) : 0;
+            const nextLevel = (typeof LEVELS !== 'undefined' && currentIndex >= 0) ? LEVELS[currentIndex + 1] : null;
+            const remainingXp = nextLevel ? Math.max(0, nextLevel.xp - points) : 0;
+            const xpLabel = nextLevel ? `încă ${remainingXp} XP` : 'Nivel maxim';
+
+            if (completed < 1) {
+                return { icon: '🎯', title: 'Prima misiune', desc: 'Completează prima misiune ca să vezi progresul real', pointsLabel: xpLabel };
+            }
+            for (const sub of subjects) {
+                const badge = SUBJECT_BADGE[sub];
+                if (!badge) continue;
+                const key = sub === 'matematica' ? 'mathQuests' : `${sub}Quests`;
+                if ((stats[key] || 0) < 5) {
+                    return { icon: badge.icon, title: `Badge "${badge.name}"`, desc: badge.desc, pointsLabel: xpLabel };
+                }
+            }
+            if (nextLevel) {
+                return { icon: nextLevel.icon, title: `Nivel ${nextLevel.name}`, desc: `Adună ${nextLevel.xp} XP`, pointsLabel: xpLabel };
+            }
+            return { icon: '🌟', title: 'Nivel maxim', desc: 'Ai atins nivelul Maestru', pointsLabel: '100%' };
         }
 
         function renderSchool(profile) {
@@ -434,12 +495,14 @@
             } else {
                 quests = getUserQuests(userId);
             }
-            dashboardQuests = quests || [];
+            quests = quests || [];
+            dashboardQuests = quests;
 
             // Update progress display
             const completed = quests.filter(q => q.completed).length;
-            document.getElementById('todayProgress').textContent = `${completed}/${quests.length} misiuni`;
-            document.getElementById('progressFill').style.width = `${(completed / quests.length) * 100}%`;
+            const total = quests.length;
+            document.getElementById('todayProgress').textContent = `${completed}/${total} misiuni`;
+            document.getElementById('progressFill').style.width = `${total ? (completed / total) * 100 : 0}%`;
 
             questList.innerHTML = quests.map(quest => `
                 <div class="quest-card quest-card--${quest.subject}" onclick="startQuest(${quest.id})">
