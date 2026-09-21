@@ -48,6 +48,12 @@ const PROFILES = {
                     icon: '📝',
                     label: 'Teste de antrenament pe materii',
                     desc: 'TIC: sistemul de operare, fișiere, foldere. Celelalte materii apar acolo pe rând.'
+                },
+                {
+                    href: 'https://teste-scoala-seral.pages.dev/contabilitate/plan-de-conturi/',
+                    icon: '📒',
+                    label: 'Planul de conturi · scris mare',
+                    desc: 'Toate cele 619 de conturi, cu buton de mărit scrisul și căutare după număr sau cuvânt.'
                 }
             ]
         }
